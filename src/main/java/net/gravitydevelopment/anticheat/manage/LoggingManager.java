@@ -69,12 +69,12 @@ public class LoggingManager {
     }
 
     public void debugLog(String message) {
-        Bukkit.getConsoleSender().sendMessage("[AntiCheat] " + ChatColor.GRAY + message);
+        Bukkit.getConsoleSender().sendMessage("[AntiCheat+] " + ChatColor.GRAY + message);
         logToLogs(message);
     }
 
     public void logToConsole(String message) {
-        Bukkit.getConsoleSender().sendMessage("[AntiCheat] " + ChatColor.RED + message);
+        Bukkit.getConsoleSender().sendMessage("[AntiCheat+] " + ChatColor.RED + message);
     }
 
     public void logToFile(String message) {

@@ -294,6 +294,14 @@ public interface Magic {
      */
     public double Y_MAXDIFF();
     /**
+     * Minimum level of movement a player can move vertically when in the air; Type=DOUBLE, Leniency=INCREASE;
+     */
+    public double Y_HOVER_BUFFER();
+    /**
+     * Maximum amount of ticks a player is allowed to hover; Type=DOUBLE, Leniency=INCREASE;
+     */
+    public double Y_HOVER_TIME();
+    /**
      * Time in between Y difference measures; Type=SYSTEM, Leniency=DECREASE.
      */
     public int Y_TIME();
@@ -341,6 +349,14 @@ public interface Magic {
      * Maximum speed a player can travel forwards or backwards on soul sand while under the influence; Type=DOUBLE, Leniency=INCREASE.
      */
     public double XZ_SPEED_MAX_SOULSAND_POTION();
+    /**
+     * Speed multipler for those running on ice; Type=DOUBLE, Leniency=INCREASE.
+     */
+    public double XZ_SPEED_ICE_MULTIPLIER();
+    /**
+     * Speed multipler for those moving through web; Type=DOUBLE, Leniency=INCREASE.
+     */
+    public double XZ_SPEED_WEB_MULTIPLIER();
     /**
      * Maximum times a player can fail the speed check before action is taken; Type=INTEGER, Leniency=INCREASE.
      */

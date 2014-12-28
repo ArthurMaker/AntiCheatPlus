@@ -33,7 +33,7 @@ import java.util.List;
 
 public class CommandReport extends CommandBase {
 
-    private static final String NAME = "AntiCheat Reports";
+    private static final String NAME = "AntiCheatPlus Reports";
     private static final String COMMAND = "report";
     private static final String USAGE = "anticheat report [group/user]";
     private static final Permission PERMISSION = Permission.SYSTEM_REPORT;

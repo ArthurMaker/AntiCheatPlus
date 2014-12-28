@@ -24,7 +24,7 @@ import org.bukkit.command.CommandSender;
 
 public class CommandHelp extends CommandBase {
 
-    private static final String NAME = "AntiCheat Help";
+    private static final String NAME = "AntiCheat+ Help";
     private static final String COMMAND = "help";
     private static final String USAGE = "anticheat help";
     private static final Permission PERMISSION = Permission.SYSTEM_HELP;

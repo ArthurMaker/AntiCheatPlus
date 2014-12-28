@@ -39,7 +39,7 @@ Latest dev download: http://ci.gravitydevelopment.net/job/AntiCheat/lastSuccessf
 Compiling
 -------
 
-AntiCheat builds on Java JDK 1.6 and uses [Maven 3](http://maven.apache.org/download.cgi) to manage dependencies.
+AntiCheat+ builds on Java JDK 1.7 and uses [Maven 3](http://maven.apache.org/download.cgi) to manage dependencies.
 
 To download the source code, first make sure [Git](http://git-scm.com/) is installed, then (from the command line) use
 ```git clone git@github.com:h31ix/AntiCheat.git```

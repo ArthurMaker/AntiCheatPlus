@@ -38,7 +38,7 @@ import java.util.List;
 
 public class PastebinReport {
     private static final String DATE = new SimpleDateFormat("yyyy-MM-dd kk:mm Z").format(new Date());
-    private static final String API_KEY = "6eeace09c2742f8463b9db9b0c467605";
+    private static final String API_KEY = "e86d2991b6119f0e16ebb870ceed1d4b";
 
     private StringBuilder report = new StringBuilder();
     private String url = "";
@@ -89,7 +89,7 @@ public class PastebinReport {
             append("------------ WARNING! ------------");
             append("This report was run with NoCheatPlus enabled. Results may be inaccurate." + '\n');
         }
-        append("------------ AntiCheat Report - " + DATE + " ------------");
+        append("------------ AntiCheatPlus Report - " + DATE + " ------------");
         appendSystemInfo();
         append("------------Last 30 logs------------");
         appendLogs();

@@ -88,6 +88,7 @@ public class Backend {
     private Map<String, Long> stepTime = new HashMap<String, Long>();
     private HashSet<Byte> transparent = new HashSet<Byte>();
     private Map<String, Long> lastFallPacket = new HashMap<String, Long>();
+    private Map<String, Integer> hoverTicks = new HashMap<String, Integer>();
 
     private Magic magic;
     private AntiCheatManager manager = null;
@@ -162,6 +163,7 @@ public class Backend {
         inventoryTime.remove(pN);
         inventoryClicks.remove(pN);
         lastFallPacket.remove(pN);
+        hoverTicks.remove(pN);
     }
 
     public CheckResult checkFreeze(Player player, double from, double to) {
@@ -324,7 +326,12 @@ public class Backend {
             
             if(player.getLocation().getBlock().getType() == Material.ICE)
             {
-            	//TODO: Ice multiplier
+            	max *= magic.XZ_SPEED_ICE_MULTIPLIER();
+            }
+            else if(player.getLocation().getBlock().getType() == Material.WEB
+            		|| player.getEyeLocation().getBlock().getType() == Material.WEB)
+            {
+            	max *= magic.XZ_SPEED_WEB_MULTIPLIER();
             }
 
             if (x > max || z > max) {
@@ -456,20 +463,48 @@ public class Backend {
         if (!isMovingExempt(player) && !Utilities.isClimbableBlock(player.getLocation().getBlock()) && !Utilities.isClimbableBlock(player.getLocation().add(0, -1, 0).getBlock()) && !player.isInsideVehicle() && !Utilities.isInWater(player) && !hasJumpPotion(player)) {
             double y1 = player.getLocation().getY();
             String name = player.getName();
-            // Fix Y axis spam.
+            
             if (!lastYcoord.containsKey(name) || !lastYtime.containsKey(name) || !yAxisLastViolation.containsKey(name) || !yAxisLastViolation.containsKey(name)) {
                 lastYcoord.put(name, y1);
                 yAxisViolations.put(name, 0);
                 yAxisLastViolation.put(name, 0L);
                 lastYtime.put(name, System.currentTimeMillis());
             } else {
+            	//If not tracking the player, go ahead and start now.
+            	if(!hoverTicks.containsKey(name))
+        		{
+        			hoverTicks.put(name, 0);
+        		}
+            	if(Math.abs(y1 - lastYcoord.get(name)) <= magic.Y_HOVER_BUFFER() 
+            			&& Utilities.cantStandAtBetter(player.getLocation().getBlock())
+            			&& !(player.getLocation().add(0, -1, 0).getBlock().getType() == Material.WATER))
+            	{
+            		System.out.println("Hovering. Can't stand = " + Utilities.cantStandAtBetter(player.getLocation().getBlock()));
+            		hoverTicks.put(name, hoverTicks.get(name) + 1);
+            		if(hoverTicks.get(name) > magic.Y_HOVER_TIME())
+            		{
+            			Location g = player.getLocation();
+            			if (!silentMode()) {
+                            g.setY(lastYcoord.get(name));
+                            sendFormattedMessage(player, "Fly hacking on the y-axis detected.  Please wait 5 seconds to prevent getting damage.");
+                            if (g.getBlock().getType() == Material.AIR) {
+                                player.teleport(g);
+                            }
+                        }
+                        return new CheckResult(CheckResult.Result.FAILED, player.getName() + " tried to fly (hover) on y-axis " + hoverTicks.get(name) + " times (max =" + magic.Y_HOVER_TIME() + ")");
+            		}
+            	}
+            	else
+            	{
+            		hoverTicks.put(name, 0);
+            	}
                 if (y1 > lastYcoord.get(name) && yAxisViolations.get(name) > magic.Y_MAXVIOLATIONS() && (System.currentTimeMillis() - yAxisLastViolation.get(name)) < magic.Y_MAXVIOTIME()) {
                     Location g = player.getLocation();
                     yAxisViolations.put(name, yAxisViolations.get(name) + 1);
                     yAxisLastViolation.put(name, System.currentTimeMillis());
                     if (!silentMode()) {
                         g.setY(lastYcoord.get(name));
-                        player.sendMessage(ChatColor.RED + "[AntiCheat] Fly hacking on the y-axis detected.  Please wait 5 seconds to prevent getting damage.");
+                        sendFormattedMessage(player, "Fly hacking on the y-axis detected.  Please wait 5 seconds to prevent getting damage.");
                         if (g.getBlock().getType() == Material.AIR) {
                             player.teleport(g);
                         }
@@ -658,7 +693,7 @@ public class Backend {
             if (i > violations && math < magic.FASTBREAK_MAXVIOLATIONTIME()) {
                 lastBlockBroken.put(name, System.currentTimeMillis());
                 if (!silentMode()) {
-                    player.sendMessage(ChatColor.RED + "[AntiCheat] Fastbreaking detected. Please wait 10 seconds before breaking blocks.");
+                    sendFormattedMessage(player, "Fastbreaking detected. Please wait 10 seconds before breaking blocks.");
                 }
                 return new CheckResult(CheckResult.Result.FAILED, player.getName() + " broke blocks too fast " + i + " times in a row (max=" + violations + ")");
             } else if (fastBreakViolation.get(name) > 0 && math > magic.FASTBREAK_MAXVIOLATIONTIME()) {
@@ -722,7 +757,7 @@ public class Backend {
             if (lastBlockPlaced.get(name) > 0 && math < magic.FASTPLACE_MAXVIOLATIONTIME()) {
                 lastBlockPlaced.put(name, time);
                 if (!silentMode()) {
-                    player.sendMessage(ChatColor.RED + "[AntiCheat] Fastplacing detected. Please wait 10 seconds before placing blocks.");
+                    sendFormattedMessage(player, "Fastplacing detected. Please wait 10 seconds before placing blocks.");
                 }
                 return new CheckResult(CheckResult.Result.FAILED, player.getName() + " placed blocks too fast " + fastBreakViolation.get(name) + " times in a row (max=" + violations + ")");
             } else if (lastBlockPlaced.get(name) > 0 && math > magic.FASTPLACE_MAXVIOLATIONTIME()) {
@@ -1110,5 +1145,10 @@ public class Backend {
 
     public boolean silentMode() {
         return manager.getConfiguration().getConfig().silentMode.getValue();
+    }
+    
+    public void sendFormattedMessage(Player player, String message)
+    {
+    	player.sendMessage(ChatColor.RED + "[AntiCheat+] " + message);
     }
 }
