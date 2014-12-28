@@ -1,5 +1,5 @@
 # AntiCheat configuration file
-# Please report any bugs: https://github.com/gravitylow/AntiCheat/issues
+# Please report any bugs: https://github.com/m1enkrafftman/AntiCheatPlus/issues
 xray:
   # Should AntiCheat use calculations to try and find xrayers?
   check-xray: true
