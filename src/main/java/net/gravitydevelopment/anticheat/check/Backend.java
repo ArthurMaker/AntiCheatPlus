@@ -321,6 +321,11 @@ public class Backend {
 
             float speed = player.getWalkSpeed();
             max += speed > 0 ? player.getWalkSpeed() - 0.2f : 0;
+            
+            if(player.getLocation().getBlock().getType() == Material.ICE)
+            {
+            	//TODO: Ice multiplier
+            }
 
             if (x > max || z > max) {
                 int num = this.increment(player, speedViolation, magic.SPEED_MAX());
