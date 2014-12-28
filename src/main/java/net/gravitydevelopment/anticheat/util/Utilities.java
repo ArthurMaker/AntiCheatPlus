@@ -66,11 +66,12 @@ public final class Utilities {
      * Determine whether or not a player can stand in a given location, 
      * and do so correctly
      * 
-     * @param block The block to be checked
+     * @param theBlock The block to be checked
      * @return true if the player should be unable to stand here
      */
-    public static boolean cantStandAtBetter(Block block)
+    public static boolean cantStandAtBetter(Block theBlock)
     {
+    	Block block = theBlock.getRelative(BlockFace.DOWN);
     	boolean center = block.getType() == Material.AIR;
     	boolean north = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
     	boolean east = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;

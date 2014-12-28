@@ -1,4 +1,4 @@
-authors: [Gravity, m1enkrafft_man]
+authors: [m1enkrafft_man, Gravity]
 description: AntiCheat helps easily identify and block malicious users on your server.
 main: net.gravitydevelopment.anticheat.AntiCheat
 name: AntiCheatPlus

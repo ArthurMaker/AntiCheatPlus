@@ -294,7 +294,7 @@ public interface Magic {
      */
     public double Y_MAXDIFF();
     /**
-     * Minimum level of movement a player can move vertically when in the air; Type=DOUBLE, Leniency=INCREASE;
+     * Minimum level of movement a player can move vertically when in the air; Type=DOUBLE, Leniency=DECREASE;
      */
     public double Y_HOVER_BUFFER();
     /**

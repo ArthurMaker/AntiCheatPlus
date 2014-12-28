@@ -324,12 +324,18 @@ public class Backend {
             float speed = player.getWalkSpeed();
             max += speed > 0 ? player.getWalkSpeed() - 0.2f : 0;
             
+            boolean isEating = startEat.containsKey(player.getName()) ? 
+            		(startEat.get(player.getName()) - System.currentTimeMillis() > magic.EAT_TIME_MIN())
+            		: false;
+            
             if(player.getLocation().getBlock().getType() == Material.ICE)
             {
             	max *= magic.XZ_SPEED_ICE_MULTIPLIER();
             }
             else if(player.getLocation().getBlock().getType() == Material.WEB
-            		|| player.getEyeLocation().getBlock().getType() == Material.WEB)
+            		|| player.getEyeLocation().getBlock().getType() == Material.WEB
+            		|| player.isBlocking()
+            		|| isEating)
             {
             	max *= magic.XZ_SPEED_WEB_MULTIPLIER();
             }
@@ -475,7 +481,7 @@ public class Backend {
         		{
         			hoverTicks.put(name, 0);
         		}
-            	if(Math.abs(y1 - lastYcoord.get(name)) <= magic.Y_HOVER_BUFFER() 
+            	if(Math.abs(y1 - lastYcoord.get(name)) <= (magic.Y_HOVER_BUFFER() * 0.75) 
             			&& Utilities.cantStandAtBetter(player.getLocation().getBlock())
             			&& !(player.getLocation().add(0, -1, 0).getBlock().getType() == Material.WATER))
             	{
