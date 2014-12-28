@@ -479,7 +479,6 @@ public class Backend {
             			&& Utilities.cantStandAtBetter(player.getLocation().getBlock())
             			&& !(player.getLocation().add(0, -1, 0).getBlock().getType() == Material.WATER))
             	{
-            		System.out.println("Hovering. Can't stand = " + Utilities.cantStandAtBetter(player.getLocation().getBlock()));
             		hoverTicks.put(name, hoverTicks.get(name) + 1);
             		if(hoverTicks.get(name) > magic.Y_HOVER_TIME())
             		{
