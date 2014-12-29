@@ -320,6 +320,12 @@ public class Backend {
                 reason = "while sprinting ";
                 max = magic.XZ_SPEED_MAX_SPRINT();
             }
+            
+            if(Utilities.isInWater(player))
+            {
+            	//Temp fix until I can update to include depth stryder
+            	max *= 3.5;
+            }
 
             float speed = player.getWalkSpeed();
             max += speed > 0 ? player.getWalkSpeed() - 0.2f : 0;
