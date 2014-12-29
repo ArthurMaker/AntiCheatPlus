@@ -74,13 +74,13 @@ public final class Utilities {
     	Block block = theBlock.getRelative(BlockFace.DOWN);
     	boolean center = block.getType() == Material.AIR;
     	boolean north = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean east = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean south = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean west = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean northeast = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean northwest = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean southeast = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean southwest = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
+    	boolean east = block.getRelative(BlockFace.EAST).getType() == Material.AIR;
+    	boolean south = block.getRelative(BlockFace.SOUTH).getType() == Material.AIR;
+    	boolean west = block.getRelative(BlockFace.WEST).getType() == Material.AIR;
+    	boolean northeast = block.getRelative(BlockFace.NORTH_EAST).getType() == Material.AIR;
+    	boolean northwest = block.getRelative(BlockFace.NORTH_WEST).getType() == Material.AIR;
+    	boolean southeast = block.getRelative(BlockFace.SOUTH_EAST).getType() == Material.AIR;
+    	boolean southwest = block.getRelative(BlockFace.SOUTH_WEST).getType() == Material.AIR;
     	//Waterwalk check will determine if they're being Jesus, we'll ignore it for this
     	boolean overAir = block.getRelative(BlockFace.DOWN).getType() == Material.AIR;
     	return (center && north && east && south && west && northeast && southeast

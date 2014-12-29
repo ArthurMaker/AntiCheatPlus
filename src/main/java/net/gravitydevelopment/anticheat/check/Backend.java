@@ -337,7 +337,10 @@ public class Backend {
             		|| player.isBlocking()
             		|| isEating)
             {
-            	max *= magic.XZ_SPEED_WEB_MULTIPLIER();
+            	if(!(player.getGameMode() == GameMode.CREATIVE) && !player.isFlying())
+            	{
+            		max *= magic.XZ_SPEED_WEB_MULTIPLIER();
+            	}
             }
 
             if (x > max || z > max) {
