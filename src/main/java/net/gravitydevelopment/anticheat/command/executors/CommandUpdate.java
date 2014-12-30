@@ -48,7 +48,7 @@ public class CommandUpdate extends CommandBase {
             }
         } else {
             cs.sendMessage(GRAY + "Your config settings have disabled update checking.");
-            cs.sendMessage(GRAY + "Please enable this setting or visit http://dev.bukkit.org/bukkit-plugins/anticheat/");
+            cs.sendMessage(GRAY + "Please enable this setting or visit http://dev.bukkit.org/bukkit-plugins/anticheatplus/");
         }
     }
 }

@@ -58,7 +58,8 @@ public enum CheckType {
     FAST_PROJECTILE(Permission.CHECK_FASTPROJECTILE),
     ITEM_SPAM(Permission.CHECK_ITEMSPAM),
     FAST_INVENTORY(Permission.CHECK_FASTINVENTORY),
-    AUTOTOOL(Permission.CHECK_AUTOTOOL);
+    AUTOTOOL(Permission.CHECK_AUTOTOOL),
+    VELOCITY(Permission.CHECK_VELOCITY);
 
     private final Permission permission;
     private final Map<String, Integer> level = new HashMap<String, Integer>();

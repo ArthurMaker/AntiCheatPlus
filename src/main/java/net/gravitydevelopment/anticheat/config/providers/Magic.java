@@ -186,6 +186,14 @@ public interface Magic {
      */
     public int VELOCITY_CHECKTIME();
     /**
+     * Minimum distance a player should travel directly after being velocitized; Type=DOUBLE, Leniency=DECREASE.
+     */
+    public double VELOCITY_MIN_DISTANCE();
+    /**
+     * Maximum times a player can fail Velocity Distance checks; Type=DOUBLE, Leniency=INCREASE;
+     */
+    public double VELOCITY_DISTANCE_COUNT();    
+    /**
      * Time to extend a player's velocity count by; Type=SYSTEM, Leniency=INCREASE.
      */
     public int VELOCITY_PREVENT();
@@ -305,6 +313,10 @@ public interface Magic {
      * Time in between Y difference measures; Type=SYSTEM, Leniency=DECREASE.
      */
     public int Y_TIME();
+    /**
+     * Maximum distance that can be traveled along an axis in a single tick; Type=DOUBLE, Leniency=INCREASE;
+     */
+    public double XZ_TICK_MAX();
     /**
      * Maximum speed a player can travel forwards or backwards; Type=DOUBLE, Leniency=INCREASE.
      */

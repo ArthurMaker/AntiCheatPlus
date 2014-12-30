@@ -415,6 +415,14 @@ public class PlayerListener extends EventListener {
                         changed = true;
                     }
                 }
+                if (getCheckManager().willCheckQuick(player, CheckType.VELOCITY))
+                {
+                	CheckResult result = getBackend().checkVelocitized(player, distance);
+                	if(result.failed())
+                	{
+                		log(result.getMessage(), player, CheckType.VELOCITY);
+                	}
+                }
                 if (!changed) {
                     user.setGoodLocation(event.getFrom());
                 }

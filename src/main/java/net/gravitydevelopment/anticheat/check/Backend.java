@@ -80,6 +80,7 @@ public class Backend {
     private Map<String, Long> brokenBlock = new HashMap<String, Long>();
     private Map<String, Long> placedBlock = new HashMap<String, Long>();
     private Map<String, Long> movingExempt = new HashMap<String, Long>();
+    private Map<String, Long> sneakExempt = new HashMap<String, Long>();
     private Map<String, Long> blockTime = new HashMap<String, Long>();
     private Map<String, Integer> blocksDropped = new HashMap<String, Integer>();
     private Map<String, Long> lastInventoryTime = new HashMap<String, Long>();
@@ -91,6 +92,7 @@ public class Backend {
     private HashSet<Byte> transparent = new HashSet<Byte>();
     private Map<String, Long> lastFallPacket = new HashMap<String, Long>();
     private Map<String, Integer> hoverTicks = new HashMap<String, Integer>();
+    private Map<String, Integer> velocityFail = new HashMap<String, Integer>();
 
     private Magic magic;
     private AntiCheatManager manager = null;
@@ -169,6 +171,8 @@ public class Backend {
         inventoryClicks.remove(pN);
         lastFallPacket.remove(pN);
         hoverTicks.remove(pN);
+        velocityFail.remove(pN);
+        sneakExempt.remove(pN);
     }
 
     public CheckResult checkFreeze(Player player, double from, double to) {
@@ -263,7 +267,8 @@ public class Backend {
     }
 
     public CheckResult checkYSpeed(Player player, double y) {
-        if (!isMovingExempt(player) && !player.isInsideVehicle() && !player.isSleeping() && y > magic.Y_SPEED_MAX() && !isDoing(player, velocitized, magic.VELOCITY_TIME()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
+    	double multiPlier = (Utilities.isInWeb(player) ? magic.XZ_SPEED_WEB_MULTIPLIER() : 1.0);
+        if (!isMovingExempt(player) && !player.isInsideVehicle() && !player.isSleeping() && y > (magic.Y_SPEED_MAX() * multiPlier) && !isDoing(player, velocitized, magic.VELOCITY_TIME()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
             return new CheckResult(CheckResult.Result.FAILED, player.getName() + "'s y speed was too high (speed=" + y + ", max=" + magic.Y_SPEED_MAX() + ")");
         } else {
             return PASS;
@@ -293,6 +298,34 @@ public class Backend {
             }
         }
         return PASS;
+    }
+    
+    public CheckResult checkVelocitized(Player player, Distance theDistance)
+    {    	
+    	String name = player.getName();
+    	if(!velocityFail.containsKey(name))
+    	{
+    		velocityFail.put(name, 0);
+    	}
+    	if(!isMovingExempt(player) && player.getVehicle() == null && justVelocity(player))
+    	{
+    		double multi = player.hasPotionEffect(PotionEffectType.SLOW) ? 0.75 : 1.0;
+    		if((theDistance.getXDifference() < magic.VELOCITY_MIN_DISTANCE()*multi) 
+    				|| (theDistance.getZDifference() < magic.VELOCITY_MIN_DISTANCE()*multi))
+    		{
+    			velocityFail.put(name, velocityFail.get(name) + 1);
+    			if(velocityFail.get(name) > magic.VELOCITY_DISTANCE_COUNT())
+    			{
+    				return new CheckResult(CheckResult.Result.FAILED, 
+    						name + " failed to move after being velocitized " 
+    								+ velocityFail.get(name) + " times.");
+    			}
+    		}else
+    		{
+    			velocityFail.put(name, 0);
+    		}
+    	}
+    	return PASS;
     }
 
     public CheckResult checkXZSpeed(Player player, double x, double z) {
@@ -349,8 +382,7 @@ public class Backend {
             {
             	max *= magic.XZ_SPEED_ICE_MULTIPLIER();
             }
-            else if(player.getLocation().getBlock().getType() == Material.WEB
-            		|| player.getEyeLocation().getBlock().getType() == Material.WEB
+            else if(Utilities.isInWeb(player)
             		|| player.isBlocking()
             		|| isEating)
             {
@@ -364,20 +396,29 @@ public class Backend {
                 int num = this.increment(player, speedViolation, magic.SPEED_MAX());
                 if (num >= magic.SPEED_MAX()) {
                     return new CheckResult(CheckResult.Result.FAILED, player.getName() + "'s speed was too high " + reason + num + " times in a row (max=" + magic.SPEED_MAX() + ", speed=" + (x > z ? x : z) + ", max speed=" + max + ")");
-                } else {
-                    return PASS;
                 }
             } else {
-                speedViolation.put(player.getName(), 0);
-                return PASS;
+            	//Handle if they're just moving insane distances. Will work more on it later, but this is kinda crucial
+            	//TODO: Improve
+            	if(x > magic.XZ_TICK_MAX() || z > magic.XZ_TICK_MAX())
+            	{
+            		double distance = Math.abs(Math.sqrt((x*x) + (z*z)));
+            		return new CheckResult(CheckResult.Result.FAILED, 
+            				player.getName() + " attempted to move " + distance + " in a single tick.");
+            	}else {
+            		speedViolation.put(player.getName(), 0);
+            		return PASS;
+            	}
             }
-        } else {
-            return PASS;
         }
+        
+        
+        return PASS;
     }
 
     public CheckResult checkSneak(Player player, double x, double z) {
-        if (player.isSneaking() && !player.isFlying() && !isMovingExempt(player) && !player.isInsideVehicle()) {
+    	//TODO
+        if (player.isSneaking() && !player.isFlying() && !isSneakExempt(player) && !player.isInsideVehicle()) {
             double i = x > magic.XZ_SPEED_MAX_SNEAK() ? x : z > magic.XZ_SPEED_MAX_SNEAK() ? z : -1;
             if (i != -1) {
                 return new CheckResult(CheckResult.Result.FAILED, player.getName() + " was sneaking too fast (speed=" + i + ", max=" + magic.XZ_SPEED_MAX_SNEAK() + ")");
@@ -511,7 +552,7 @@ public class Backend {
             			Location g = player.getLocation();
             			if (!silentMode()) {
                             g.setY(lastYcoord.get(name));
-                            sendFormattedMessage(player, "Fly hacking on the y-axis detected.  Please wait 5 seconds to prevent getting damage.");
+                            sendFormattedMessage(player, "Fly hacking on the y-axis detected.");
                             if (g.getBlock().getType() == Material.AIR) {
                                 player.teleport(g);
                             }
@@ -1065,7 +1106,8 @@ public class Backend {
     }
 
     public void logToggleSneak(final Player player) {
-        movingExempt.put(player.getName(), System.currentTimeMillis() + magic.SNEAK_TIME());
+    	//Change to sneak exempt; otherwise everything is boned (Speed bypass with sneaking).
+        sneakExempt.put(player.getName(), System.currentTimeMillis() + magic.SNEAK_TIME());
     }
 
     public void logTeleport(final Player player) {
@@ -1092,6 +1134,11 @@ public class Backend {
         return isDoing(player, movingExempt, -1);
     }
 
+    public boolean isSneakExempt(Player player)
+    {
+    	return isDoing(player, sneakExempt, -1);
+    }
+    
     public boolean isAscending(Player player) {
         return isAscending.contains(player.getName());
     }
