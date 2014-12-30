@@ -51,7 +51,7 @@ public final class Utilities {
      */
     public static void alert(List<String> message) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (Permission.SYSTEM_ALERT.get(player)) {
+            if (Permission.SYSTEM_ALERT.get(player) || Permission.SYSTEM_ALERTALL.get(player)) {
                 for (String msg : message) {
                     player.sendMessage(msg);
                 }
@@ -71,6 +71,19 @@ public final class Utilities {
      */
     public static boolean cantStandAtBetter(Block block)
     {
+    	Block otherBlock = block.getRelative(BlockFace.DOWN);
+    	
+    	boolean center1 = otherBlock.getType() == Material.AIR;
+    	boolean north1 = otherBlock.getRelative(BlockFace.NORTH).getType() == Material.AIR;
+    	boolean east1 = otherBlock.getRelative(BlockFace.EAST).getType() == Material.AIR;
+    	boolean south1 = otherBlock.getRelative(BlockFace.SOUTH).getType() == Material.AIR;
+    	boolean west1 = otherBlock.getRelative(BlockFace.WEST).getType() == Material.AIR;
+    	boolean northeast1 = otherBlock.getRelative(BlockFace.NORTH_EAST).getType() == Material.AIR;
+    	boolean northwest1 = otherBlock.getRelative(BlockFace.NORTH_WEST).getType() == Material.AIR;
+    	boolean southeast1 = otherBlock.getRelative(BlockFace.SOUTH_EAST).getType() == Material.AIR;
+    	boolean southwest1 = otherBlock.getRelative(BlockFace.SOUTH_WEST).getType() == Material.AIR;
+    	boolean overAir1 = otherBlock.getRelative(BlockFace.DOWN).getType() == Material.AIR;
+    	
     	boolean center = block.getType() == Material.AIR;
     	boolean north = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
     	boolean east = block.getRelative(BlockFace.EAST).getType() == Material.AIR;
@@ -83,7 +96,37 @@ public final class Utilities {
     	//Waterwalk check will determine if they're being Jesus, we'll ignore it for this
     	boolean overAir = block.getRelative(BlockFace.DOWN).getType() == Material.AIR;
     	return (center && north && east && south && west && northeast && southeast
-    			&& northwest && southwest && overAir);
+    			&& northwest && southwest && overAir
+    			&& center1 && north1 && east1 && south1 && west1 && northeast1 && southeast1
+    			&& northwest1 && southwest1 && overAir1);
+    }
+    
+    /**
+     * Determine if a player has a given Enchantment type
+     * 
+     * @param The name of the enchantment
+     * @return the level, -1 if not contained
+     */
+    public static int getLevelForEnchantment(Player player, String enchantment)
+    {
+    	Enchantment theEnchantment;
+    	//For some odd reason, this throwns a NPE *sarcasm* hooray for Bukkit not updating...
+    	try
+    	{
+    		theEnchantment = Enchantment.getByName(enchantment);
+    		for(ItemStack item : player.getInventory().getArmorContents())
+    		{
+    			if(item.containsEnchantment(theEnchantment))
+    			{
+    				return item.getEnchantmentLevel(theEnchantment);
+    			}
+    		}
+    	}
+    	catch(Exception e)
+    	{
+    		return -1;
+    	}
+    	return -1;
     }
 
     /**

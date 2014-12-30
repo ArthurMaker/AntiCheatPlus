@@ -14,6 +14,8 @@ commands:
 permissions:
   anticheat.system.notice:
     description: See broadcasts when a player is kicked or banned for hacking
+  anticheat.system.alertall:
+    description: See every message when a player fails a check, not just when they might be cheating
   anticheat.system.alert:
     description: See alerts when a player might be cheating
   anticheat.system.help:
@@ -55,6 +57,7 @@ permissions:
       anticheat.system.update: true
       anticheat.system.calibrate: true
       anticheat.system.debug: true
+      anticheat.system.alertall: true
   anticheat.check.zombe.fly:
     description: Allow players to use zombe flymod
     default: false

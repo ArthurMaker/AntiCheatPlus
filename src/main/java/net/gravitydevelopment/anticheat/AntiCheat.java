@@ -19,16 +19,19 @@
 package net.gravitydevelopment.anticheat;
 
 import com.comphenix.protocol.ProtocolLibrary;
+
 import net.gravitydevelopment.anticheat.command.CommandHandler;
 import net.gravitydevelopment.anticheat.config.Configuration;
 import net.gravitydevelopment.anticheat.event.*;
 import net.gravitydevelopment.anticheat.manage.AntiCheatManager;
 import net.gravitydevelopment.anticheat.manage.PacketManager;
+import net.gravitydevelopment.anticheat.util.Permission;
 import net.gravitydevelopment.anticheat.util.User;
 import net.gravitydevelopment.anticheat.util.Utilities;
 import net.gravitydevelopment.anticheat.xray.XRayListener;
 import net.gravitydevelopment.anticheat.xray.XRayTracker;
 import net.gravitydevelopment.updater.Updater;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -100,6 +103,7 @@ public class AntiCheat extends JavaPlugin {
         cleanup();
     }
 
+    //TODO
     private void setupProtocol() {
         if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
             protocolLib = true;

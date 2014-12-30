@@ -301,7 +301,7 @@ public class PlayerListener extends EventListener {
                 CheckResult result = getBackend().checkFreeze(player, from.getY(), to.getY());
                 if (result.failed()) {
                     log(result.getMessage(), player, CheckType.SPEED);
-                    if (!silentMode()) {
+                    if (!silentMode() && !AntiCheat.developerMode()) {
                         player.kickPlayer("Freezing client");
                     }
                 }

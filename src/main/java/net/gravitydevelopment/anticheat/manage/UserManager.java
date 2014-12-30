@@ -226,12 +226,15 @@ public class UserManager {
                             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                         }
                     } else if (event.equalsIgnoreCase("KICK")) {
-                        user.getPlayer().kickPlayer(RED + kickReason);
-                        String msg = RED + config.getLang().KICK_BROADCAST().replaceAll("&player", name) + " (" + CheckType.getName(type) + ")";
-                        if (!msg.equals("")) {
-                            manager.log(msg);
-                            manager.playerLog(msg);
-                        }
+                    	if(!AntiCheat.developerMode())
+                    	{
+                    		user.getPlayer().kickPlayer(RED + kickReason);
+                    		String msg = RED + config.getLang().KICK_BROADCAST().replaceAll("&player", name) + " (" + CheckType.getName(type) + ")";
+                    		if (!msg.equals("")) {
+                    			manager.log(msg);
+                    			manager.playerLog(msg);
+                    		}
+                    	}
                     } else if (event.equalsIgnoreCase("WARN")) {
                         List<String> message = warning;
                         for (String string : message) {
@@ -240,13 +243,16 @@ public class UserManager {
                             }
                         }
                     } else if (event.equalsIgnoreCase("BAN")) {
-                        user.getPlayer().setBanned(true);
-                        user.getPlayer().kickPlayer(RED + banReason);
-                        String msg = RED + config.getLang().BAN_BROADCAST().replaceAll("&player", name) + " (" + CheckType.getName(type) + ")";
-                        if (!msg.equals("")) {
-                            manager.log(msg);
-                            manager.playerLog(msg);
-                        }
+                    	if(!AntiCheat.developerMode())
+                    	{
+                    		user.getPlayer().setBanned(true);
+                    		user.getPlayer().kickPlayer(RED + banReason);
+                    		String msg = RED + config.getLang().BAN_BROADCAST().replaceAll("&player", name) + " (" + CheckType.getName(type) + ")";
+                    		if (!msg.equals("")) {
+                    			manager.log(msg);
+                    			manager.playerLog(msg);
+                    		}
+                    	}
                     } else if (event.equalsIgnoreCase("RESET")) {
                         user.resetLevel();
                     }

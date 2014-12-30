@@ -26,6 +26,7 @@ import net.gravitydevelopment.anticheat.manage.AntiCheatManager;
 import net.gravitydevelopment.anticheat.util.User;
 import net.gravitydevelopment.anticheat.util.Distance;
 import net.gravitydevelopment.anticheat.util.Utilities;
+
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -36,6 +37,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -94,6 +96,9 @@ public class Backend {
     private AntiCheatManager manager = null;
     private Lang lang = null;
     private static final CheckResult PASS = new CheckResult(CheckResult.Result.PASSED);
+    
+    //Used until a stable CB build for 1.8 is released/legal/etc
+    private static final String DEPTH_STRIDER_ENCHANT = "DEPTH_STRIDER";
 
     public Backend(AntiCheatManager instance) {
         magic = instance.getConfiguration().getMagic();
@@ -323,8 +328,14 @@ public class Backend {
             
             if(Utilities.isInWater(player))
             {
-            	//Temp fix until I can update to include depth stryder
-            	max *= 3.5;
+            	//Ignore this, it's Minecrafty stuff.
+            	double multiPerLevel = 1.55;
+            	
+            	int level = Utilities.getLevelForEnchantment(player, DEPTH_STRIDER_ENCHANT);
+            	if(level != -1)
+            	{
+            		max = max * (level*multiPerLevel);
+            	}
             }
 
             float speed = player.getWalkSpeed();

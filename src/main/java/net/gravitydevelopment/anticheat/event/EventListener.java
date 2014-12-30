@@ -23,7 +23,10 @@ import net.gravitydevelopment.anticheat.check.Backend;
 import net.gravitydevelopment.anticheat.check.CheckType;
 import net.gravitydevelopment.anticheat.config.Configuration;
 import net.gravitydevelopment.anticheat.manage.*;
+import net.gravitydevelopment.anticheat.util.Permission;
 import net.gravitydevelopment.anticheat.util.User;
+
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -46,6 +49,13 @@ public class EventListener implements Listener {
             logCheat(type, user);
             if (user.increaseLevel(type) && message != null) {
                 AntiCheat.getManager().log(message);
+                for(Player thePlayer : AntiCheat.getPlugin().getServer().getOnlinePlayers())
+                {
+                	if(Permission.SYSTEM_ALERTALL.get(thePlayer) && !silentMode())
+                	{
+                		thePlayer.sendMessage(ChatColor.RED + "[AntiCheat+] " + message);
+                	}
+                }
             }
             removeDecrease(user);
         }

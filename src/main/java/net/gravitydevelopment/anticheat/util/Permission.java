@@ -63,6 +63,7 @@ public enum Permission {
     SYSTEM_CALIBRATE,
     SYSTEM_CHECK,
     SYSTEM_DEBUG,
+    SYSTEM_ALERTALL,
     SYSTEM_RELOAD;
 
     private static final String PERMISSION_ALL = "anticheat.*";
