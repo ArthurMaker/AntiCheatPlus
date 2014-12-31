@@ -18,13 +18,20 @@
 
 package net.gravitydevelopment.anticheat.check;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import net.gravitydevelopment.anticheat.AntiCheat;
 import net.gravitydevelopment.anticheat.config.Configuration;
 import net.gravitydevelopment.anticheat.config.providers.Lang;
 import net.gravitydevelopment.anticheat.config.providers.Magic;
 import net.gravitydevelopment.anticheat.manage.AntiCheatManager;
-import net.gravitydevelopment.anticheat.util.User;
 import net.gravitydevelopment.anticheat.util.Distance;
+import net.gravitydevelopment.anticheat.util.TimedLocation;
+import net.gravitydevelopment.anticheat.util.User;
 import net.gravitydevelopment.anticheat.util.Utilities;
 
 import org.bukkit.ChatColor;
@@ -37,10 +44,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.*;
 
 public class Backend {
     private List<String> isInWater = new ArrayList<String>();
@@ -93,6 +97,7 @@ public class Backend {
     private Map<String, Long> lastFallPacket = new HashMap<String, Long>();
     private Map<String, Integer> hoverTicks = new HashMap<String, Integer>();
     private Map<String, Integer> velocityFail = new HashMap<String, Integer>();
+    private Map<String, TimedLocation> timedLoc = new HashMap<String, TimedLocation>();
 
     private Magic magic;
     private AntiCheatManager manager = null;
@@ -173,6 +178,7 @@ public class Backend {
         hoverTicks.remove(pN);
         velocityFail.remove(pN);
         sneakExempt.remove(pN);
+        timedLoc.remove(pN);
     }
 
     public CheckResult checkFreeze(Player player, double from, double to) {
@@ -267,7 +273,7 @@ public class Backend {
     }
 
     public CheckResult checkYSpeed(Player player, double y) {
-    	double multiPlier = (Utilities.isInWeb(player) ? magic.XZ_SPEED_WEB_MULTIPLIER() : 1.0);
+    	double multiPlier = (player.getEyeLocation().getBlock().getType() == Material.WEB ? magic.XZ_SPEED_WEB_MULTIPLIER() : 1.0);
         if (!isMovingExempt(player) && !player.isInsideVehicle() && !player.isSleeping() && y > (magic.Y_SPEED_MAX() * multiPlier) && !isDoing(player, velocitized, magic.VELOCITY_TIME()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
             return new CheckResult(CheckResult.Result.FAILED, player.getName() + "'s y speed was too high (speed=" + y + ", max=" + magic.Y_SPEED_MAX() + ")");
         } else {
@@ -316,9 +322,8 @@ public class Backend {
     			velocityFail.put(name, velocityFail.get(name) + 1);
     			if(velocityFail.get(name) > magic.VELOCITY_DISTANCE_COUNT())
     			{
-    				return new CheckResult(CheckResult.Result.FAILED, 
-    						name + " failed to move after being velocitized " 
-    								+ velocityFail.get(name) + " times.");
+    				//TODO: Improve
+    				//return new CheckResult(CheckResult.Result.FAILED, name + " failed to move after being velocitized " + velocityFail.get(name) + " times.");
     			}
     		}else
     		{
@@ -329,6 +334,10 @@ public class Backend {
     }
 
     public CheckResult checkXZSpeed(Player player, double x, double z) {
+    	if(!speedViolation.containsKey(player.getName()))
+    	{
+    		speedViolation.put(player.getName(), 1);
+    	}
         if (!isSpeedExempt(player) && player.getVehicle() == null) {
             String reason = "";
             double max = magic.XZ_SPEED_MAX();
@@ -386,7 +395,8 @@ public class Backend {
             		|| player.isBlocking()
             		|| isEating)
             {
-            	if(!(player.getGameMode() == GameMode.CREATIVE) && !player.isFlying())
+            	if(!(player.getGameMode() == GameMode.CREATIVE) && !player.isFlying() 
+            			&& !(player.getLocation().getBlock().getType() == Material.SOUL_SAND))
             	{
             		max *= magic.XZ_SPEED_WEB_MULTIPLIER();
             	}
@@ -398,26 +408,17 @@ public class Backend {
                     return new CheckResult(CheckResult.Result.FAILED, player.getName() + "'s speed was too high " + reason + num + " times in a row (max=" + magic.SPEED_MAX() + ", speed=" + (x > z ? x : z) + ", max speed=" + max + ")");
                 }
             } else {
-            	//Handle if they're just moving insane distances. Will work more on it later, but this is kinda crucial
-            	//TODO: Improve
-            	if(x > magic.XZ_TICK_MAX() || z > magic.XZ_TICK_MAX())
+            	if(speedViolation.get(player.getName()) > 1)
             	{
-            		double distance = Math.abs(Math.sqrt((x*x) + (z*z)));
-            		return new CheckResult(CheckResult.Result.FAILED, 
-            				player.getName() + " attempted to move " + distance + " in a single tick.");
-            	}else {
-            		speedViolation.put(player.getName(), 0);
-            		return PASS;
+            		speedViolation.put(player.getName(), speedViolation.get(player.getName()) - 1);
             	}
             }
         }
-        
         
         return PASS;
     }
 
     public CheckResult checkSneak(Player player, double x, double z) {
-    	//TODO
         if (player.isSneaking() && !player.isFlying() && !isSneakExempt(player) && !player.isInsideVehicle()) {
             double i = x > magic.XZ_SPEED_MAX_SNEAK() ? x : z > magic.XZ_SPEED_MAX_SNEAK() ? z : -1;
             if (i != -1) {
@@ -609,20 +610,42 @@ public class Backend {
 
     public CheckResult checkTimer(Player player) {
         String name = player.getName();
-        int step = 1;
-        if (steps.containsKey(name)) {
-            step = steps.get(name) + 1;
+        if(!stepTime.containsKey(name))
+        {
+        	stepTime.put(name, System.currentTimeMillis());
         }
-        if (step == 1) {
-            stepTime.put(name, System.currentTimeMillis());
-        }
-        increment(player, steps, step);
-        if (step == magic.TIMER_STEP_CHECK()) {
-            long time = System.currentTimeMillis() - stepTime.get(name);
-            steps.put(name, 0);
-            if (time < magic.TIMER_TIMEMIN()) {
-                return new CheckResult(CheckResult.Result.FAILED, player.getName() + " tried to alter their timer, took " + step + " steps in " + time + " ms (min = " + magic.TIMER_TIMEMIN() + " ms)");
-            }
+        if(!isMovingExempt(player))
+        {
+        	long currentTime = System.currentTimeMillis();
+        	long math = currentTime - stepTime.get(name);
+        	stepTime.put(name, currentTime);
+        	if(math < magic.TIMER_TIMEMIN())
+        	{
+        		if(!steps.containsKey(name))
+        		{
+        			steps.put(name, 1);
+        		}
+        		else
+        		{
+        			steps.put(name, steps.get(name) + 1);
+        		}
+        		if(steps.get(name) > magic.TIMER_STEP_CHECK())
+        		{
+        			if(!silentMode())
+        			{
+        				sendFormattedMessage(player, "Modification of game timer detected. Please stand still for a bit.");
+        			}
+        			return new CheckResult(CheckResult.Result.FAILED, 
+        					name + " attempted to send packets too fast; min_delta=" 
+        							+ magic.TIMER_TIMEMIN() + " | their's=" + math);
+        		}
+        	}else
+        	{
+        		if(steps.get(name) >= 2)
+    			{
+    				steps.put(name, steps.get(name) - 2);
+    			}
+        	}
         }
         return PASS;
     }
@@ -820,7 +843,8 @@ public class Backend {
             AntiCheat.debugLog("Noted that fastPlaceViolation contains key " + name + " with value " + fastPlaceViolation.get(name));
             Long math = System.currentTimeMillis() - lastBlockPlaced.get(name);
             AntiCheat.debugLog("Player lastBlockPlaced value = " + lastBlockPlaced + ", diff=" + math);
-            if (lastBlockPlaced.get(name) > 0 && math < magic.FASTPLACE_MAXVIOLATIONTIME()) {
+            double multiplier = 0.75; //Accounting for lowered tick delay in 1.8 and higher
+            if (lastBlockPlaced.get(name) > 0 && math < magic.FASTPLACE_MAXVIOLATIONTIME() * multiplier) {
                 lastBlockPlaced.put(name, time);
                 if (!silentMode()) {
                     sendFormattedMessage(player, "Fastplacing detected. Please wait 10 seconds before placing blocks.");
@@ -1120,6 +1144,7 @@ public class Backend {
         yAxisLastViolation.remove(player.getName());
         lastYcoord.remove(player.getName());
         lastYtime.remove(player.getName());
+        timedLoc.put(player.getName(), new TimedLocation(player.getLocation(), System.currentTimeMillis()));
     }
 
     public void logExitFly(final Player player) {

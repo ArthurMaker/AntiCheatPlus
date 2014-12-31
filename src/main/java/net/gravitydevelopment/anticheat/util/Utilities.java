@@ -62,6 +62,16 @@ public final class Utilities {
         }
     }
     
+    public static double getXDelta(Location one, Location two)
+    {
+    	return Math.abs(one.getX() - two.getX());
+    }
+    
+    public static double getZDelta(Location one, Location two)
+    {
+    	return Math.abs(one.getZ() - two.getZ());
+    }
+    
     /**
      * Determine whether or not a player can stand in a given location, 
      * and do so correctly

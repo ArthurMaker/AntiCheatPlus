@@ -50,6 +50,7 @@ public enum Permission {
     CHECK_VELOCITY,
     CHECK_FASTINVENTORY,
     CHECK_AUTOTOOL,
+    CHECK_MOREPACKETS,
 
     /* System Nodes */
     SYSTEM_LOG,

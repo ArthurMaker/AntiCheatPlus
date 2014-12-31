@@ -372,17 +372,17 @@ public class PlayerListener extends EventListener {
                         log(result.getMessage(), player, CheckType.SPEED);
                         changed = true;
                     }
-                    /*if ((event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ())) {
-                        result = backend.checkTimer(player);
-                        if(result.failed()) {
-                            if (!config.silentMode()) {
+                    if ((event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ())) {
+                        CheckResult result1 = getBackend().checkTimer(player);
+                        if(result1.failed()) {
+                            if (!silentMode()) {
                                 event.setTo(user.getGoodLocation(from.clone()));
                             }
-                            log("tried to alter their timer.", player, CheckType.SPEED);
+                            log(result1.getMessage(), player, CheckType.MOREPACKETS);
                             changed = true;
                         }
                     }
-                    */
+                    
                 }
                 if (getCheckManager().willCheckQuick(player, CheckType.WATER_WALK)) {
                     CheckResult result = getBackend().checkWaterWalk(player, x, y, z);
