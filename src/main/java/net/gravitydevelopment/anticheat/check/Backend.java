@@ -98,6 +98,8 @@ public class Backend {
     private Map<String, Integer> hoverTicks = new HashMap<String, Integer>();
     private Map<String, Integer> velocityFail = new HashMap<String, Integer>();
     private Map<String, TimedLocation> timedLoc = new HashMap<String, TimedLocation>();
+    private Map<String, Integer> verticalCount = new HashMap<String, Integer>();
+    private Map<String, Boolean> canMoveVert = new HashMap<String, Boolean>();
 
     private Magic magic;
     private AntiCheatManager manager = null;
@@ -179,6 +181,8 @@ public class Backend {
         velocityFail.remove(pN);
         sneakExempt.remove(pN);
         timedLoc.remove(pN);
+        verticalCount.remove(pN);
+        canMoveVert.remove(pN);
     }
 
     public CheckResult checkFreeze(Player player, double from, double to) {
@@ -265,11 +269,20 @@ public class Backend {
     }
 
     public CheckResult checkSpider(Player player, double y) {
-        if (y <= magic.LADDER_Y_MAX() && y >= magic.LADDER_Y_MIN() && !Utilities.isClimbableBlock(player.getLocation().getBlock())) {
-            return new CheckResult(CheckResult.Result.FAILED, player.getName() + " tried to climb a non-ladder (" + player.getLocation().getBlock().getType() + ")");
-        } else {
-            return PASS;
-        }
+        String name = player.getName();
+    	if(!verticalCount.containsKey(name))
+    	{
+    		verticalCount.put(name, 0);
+    	}
+    	if (y <= magic.LADDER_Y_MAX() && y >= magic.LADDER_Y_MIN() && !Utilities.isClimbableBlock(player.getLocation().getBlock())) {
+        	verticalCount.put(name, verticalCount.get(name) + 1);
+        	if(verticalCount.get(name) > magic.Y_MAXVIOLATIONS())
+        	{
+        		return new CheckResult(CheckResult.Result.FAILED, player.getName() + " tried to climb a non-ladder (" + player.getLocation().getBlock().getType() + ")");
+        	}
+    	}
+    	verticalCount.put(name, verticalCount.get(name) - 1);
+    	return PASS;
     }
 
     public CheckResult checkYSpeed(Player player, double y) {
@@ -525,12 +538,51 @@ public class Backend {
     }
 
     public CheckResult checkYAxis(Player player, Distance distance) {
+    	String name = player.getName();
+    	if(!canMoveVert.containsKey(name))
+    	{
+    		canMoveVert.put(name, true);
+    	}
         if (distance.getYDifference() > magic.TELEPORT_MIN() || distance.getYDifference() < 0) {
             return PASS;
         }
         if (!isMovingExempt(player) && !Utilities.isClimbableBlock(player.getLocation().getBlock()) && !Utilities.isClimbableBlock(player.getLocation().add(0, -1, 0).getBlock()) && !player.isInsideVehicle() && !Utilities.isInWater(player) && !hasJumpPotion(player)) {
             double y1 = player.getLocation().getY();
-            String name = player.getName();
+            double lastDelta = distance.getYActual();
+            if(player.getLocation().getBlock().getType() != Material.AIR || player.isOnGround())
+            {
+            	//Because onGround
+            	canMoveVert.put(name, true);
+            }else
+            {
+            	if(canMoveVert.get(name))
+            	{
+            		if(lastDelta > 0)
+            		{
+            			canMoveVert.put(name, false);
+            		}
+            	}else
+            	{
+            		if(lastDelta < 0)
+            		{
+
+            			yAxisViolations.put(name, yAxisViolations.get(name) + 1);
+            			if(yAxisViolations.get(name) > magic.Y_MAXVIOLATIONS())
+            			{
+            				Location g = player.getLocation();
+            				if (!silentMode()) {
+            					g.setY(lastYcoord.get(name));
+            					sendFormattedMessage(player, "Fly hacking on the y-axis detected.");
+            					if (g.getBlock().getType() == Material.AIR) {
+            						player.teleport(g);
+            					}
+            				}
+            				return new CheckResult(CheckResult.Result.FAILED, player.getName() + " tried to fly on y-axis " + hoverTicks.get(name) + " times (max =" + magic.Y_MAXVIOLATIONS() + ")");
+            			}
+            		}
+            	}
+            }
+            
             
             if (!lastYcoord.containsKey(name) || !lastYtime.containsKey(name) || !yAxisLastViolation.containsKey(name) || !yAxisLastViolation.containsKey(name)) {
                 lastYcoord.put(name, y1);
@@ -543,9 +595,10 @@ public class Backend {
         		{
         			hoverTicks.put(name, 0);
         		}
+            	boolean overAir = Utilities.cantStandAtBetter(player.getLocation().getBlock());
+            	boolean overWater = Utilities.cantStandAtWater(player.getLocation().getBlock());
             	if(Math.abs(y1 - lastYcoord.get(name)) <= (magic.Y_HOVER_BUFFER() * 0.75) 
-            			&& Utilities.cantStandAtBetter(player.getLocation().getBlock())
-            			&& !(player.getLocation().add(0, -1, 0).getBlock().getType() == Material.WATER))
+            			&& (overAir || overWater))
             	{
             		hoverTicks.put(name, hoverTicks.get(name) + 1);
             		if(hoverTicks.get(name) > magic.Y_HOVER_TIME())

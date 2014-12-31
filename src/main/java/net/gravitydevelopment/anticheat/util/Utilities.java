@@ -92,23 +92,31 @@ public final class Utilities {
     	boolean northwest1 = otherBlock.getRelative(BlockFace.NORTH_WEST).getType() == Material.AIR;
     	boolean southeast1 = otherBlock.getRelative(BlockFace.SOUTH_EAST).getType() == Material.AIR;
     	boolean southwest1 = otherBlock.getRelative(BlockFace.SOUTH_WEST).getType() == Material.AIR;
-    	boolean overAir1 = otherBlock.getRelative(BlockFace.DOWN).getType() == Material.AIR;
-    	
-    	boolean center = block.getType() == Material.AIR;
-    	boolean north = block.getRelative(BlockFace.NORTH).getType() == Material.AIR;
-    	boolean east = block.getRelative(BlockFace.EAST).getType() == Material.AIR;
-    	boolean south = block.getRelative(BlockFace.SOUTH).getType() == Material.AIR;
-    	boolean west = block.getRelative(BlockFace.WEST).getType() == Material.AIR;
-    	boolean northeast = block.getRelative(BlockFace.NORTH_EAST).getType() == Material.AIR;
-    	boolean northwest = block.getRelative(BlockFace.NORTH_WEST).getType() == Material.AIR;
-    	boolean southeast = block.getRelative(BlockFace.SOUTH_EAST).getType() == Material.AIR;
-    	boolean southwest = block.getRelative(BlockFace.SOUTH_WEST).getType() == Material.AIR;
-    	//Waterwalk check will determine if they're being Jesus, we'll ignore it for this
-    	boolean overAir = block.getRelative(BlockFace.DOWN).getType() == Material.AIR;
-    	return (center && north && east && south && west && northeast && southeast
-    			&& northwest && southwest && overAir
-    			&& center1 && north1 && east1 && south1 && west1 && northeast1 && southeast1
+    	boolean overAir1 = otherBlock.getRelative(BlockFace.DOWN).getType() == Material.AIR; 
+
+    	return (center1 && north1 && east1 && south1 && west1 && northeast1 && southeast1
     			&& northwest1 && southwest1 && overAir1);
+    }
+    
+    /**
+     * Eh, I got lazy; sue me.
+     * TODO: Improve
+     * @param block
+     * @return
+     */
+    public static boolean cantStandAtWater(Block block)
+    {
+    	Block otherBlock = block.getRelative(BlockFace.DOWN);
+    	boolean isHover = block.getType() == Material.AIR;
+    	boolean n = otherBlock.getRelative(BlockFace.NORTH).getType() == Material.WATER;
+    	boolean s = otherBlock.getRelative(BlockFace.SOUTH).getType() == Material.WATER;
+    	boolean e = otherBlock.getRelative(BlockFace.EAST).getType() == Material.WATER;
+    	boolean w = otherBlock.getRelative(BlockFace.WEST).getType() == Material.WATER;
+    	boolean ne = otherBlock.getRelative(BlockFace.NORTH_EAST).getType() == Material.WATER;
+    	boolean nw = otherBlock.getRelative(BlockFace.NORTH_WEST).getType() == Material.WATER;
+    	boolean se = otherBlock.getRelative(BlockFace.SOUTH_EAST).getType() == Material.WATER;
+    	boolean sw = otherBlock.getRelative(BlockFace.SOUTH_WEST).getType() == Material.WATER;
+    	return(n && s && e && w && ne && nw && se && sw && isHover);
     }
     
     /**
