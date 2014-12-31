@@ -131,7 +131,8 @@ public final class Utilities {
     	boolean solid = block.getType().isSolid() 
     			&& !(block.getType().name().toLowerCase().contains("door"))
     				&& !(block.getType().name().toLowerCase().contains("fence"))
-    					&& !(block.getType().name().toLowerCase().contains("bars")); 
+    					&& !(block.getType().name().toLowerCase().contains("bars"))
+    						&& !(block.getType().name().toLowerCase().contains("sign")); 
     	return !isSand && !isGravel && !solid;
     }
     
