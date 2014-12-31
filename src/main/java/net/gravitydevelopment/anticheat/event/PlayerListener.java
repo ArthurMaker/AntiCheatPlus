@@ -338,6 +338,21 @@ public class PlayerListener extends EventListener {
                     log(result.getMessage(), player, CheckType.VCLIP);
                 }
             }
+            if (getCheckManager().willCheckQuick(player, CheckType.VCLIP) && event.getFrom().getY() > event.getTo().getY()) {
+                CheckResult result = getBackend().checkNoclip(player);
+                if (result.failed()) {
+                    if (!silentMode()) {
+                        Location newloc = new Location(player.getWorld(), event.getFrom().getX(), event.getFrom().getY(), event.getFrom().getZ());
+                        if (newloc.getBlock().getType() == Material.AIR) {
+                            event.setTo(newloc);
+                        } else {
+                            event.setTo(user.getGoodLocation(from.clone()));
+                        }
+                        player.damage(3);
+                    }
+                    log(result.getMessage(), player, CheckType.VCLIP);
+                }
+            }
             if (getCheckManager().willCheckQuick(player, CheckType.NOFALL) && getCheckManager().willCheck(player, CheckType.FLY) && !Utilities.isClimbableBlock(player.getLocation().getBlock()) && event.getFrom().getY() > event.getTo().getY()) {
                 CheckResult result = getBackend().checkNoFall(player, y);
                 if (result.failed()) {

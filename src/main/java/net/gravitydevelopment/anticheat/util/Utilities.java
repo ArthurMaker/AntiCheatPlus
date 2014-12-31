@@ -120,6 +120,22 @@ public final class Utilities {
     }
     
     /**
+     * What it says.
+     * @param block
+     * @return
+     */
+    public static boolean canStandWithin(Block block)
+    {
+    	boolean isSand = block.getType() == Material.SAND;
+    	boolean isGravel = block.getType() == Material.GRAVEL;
+    	boolean solid = block.getType().isSolid() 
+    			&& !(block.getType().name().toLowerCase().contains("door"))
+    				&& !(block.getType().name().toLowerCase().contains("fence"))
+    					&& !(block.getType().name().toLowerCase().contains("bars")); 
+    	return !isSand && !isGravel && !solid;
+    }
+    
+    /**
      * Determine if a player has a given Enchantment type
      * 
      * @param The name of the enchantment

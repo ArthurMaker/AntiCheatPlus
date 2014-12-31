@@ -518,6 +518,18 @@ public class Backend {
         }
         return PASS;
     }
+    
+    public CheckResult checkNoclip(Player player)
+    {
+    	Block block = player.getEyeLocation().getBlock();
+    	Block otherBlock = player.getLocation().getBlock();
+    	if(!Utilities.canStandWithin(block) || !Utilities.canStandWithin(otherBlock))
+    	{
+    		return new CheckResult(CheckResult.Result.FAILED, player.getName() + 
+    				" attempted to pass through a solid block.");
+    	}
+    	return PASS;
+    }
 
     public CheckResult checkVClip(Player player, Distance distance) {
         double from = Math.round(distance.fromY());
@@ -632,7 +644,7 @@ public class Backend {
                     return new CheckResult(CheckResult.Result.FAILED, player.getName() + " tried to fly on y-axis " + yAxisViolations.get(name) + " times (max =" + magic.Y_MAXVIOLATIONS() + ")");
                 } else {
                     if (yAxisViolations.get(name) > magic.Y_MAXVIOLATIONS() && (System.currentTimeMillis() - yAxisLastViolation.get(name)) > magic.Y_MAXVIOTIME()) {
-                        yAxisViolations.put(name, 0);
+                        yAxisViolations.put(name, yAxisViolations.get(name) - 1);
                         yAxisLastViolation.put(name, 0L);
                     }
                 }
