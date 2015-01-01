@@ -28,7 +28,7 @@ system:
   # Turning auto-update off is a _BAD_ idea. You will no longer be protected by the latest hacks/cheats if you do so, and will have to update manually.
   auto-update: true
   # Should AntiCheat log ALL failed checks to console?
-  log-to-console: true
+  log-to-console: false
   # Should AntiCheat log to file?
   log-to-file: true
   # Should AntiCheat display extra debug information when starting?

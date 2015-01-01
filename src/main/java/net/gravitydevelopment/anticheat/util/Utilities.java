@@ -19,6 +19,7 @@
 package net.gravitydevelopment.anticheat.util;
 
 import net.gravitydevelopment.anticheat.AntiCheat;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,6 +29,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.NumberConversions;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +53,7 @@ public final class Utilities {
      */
     public static void alert(List<String> message) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (Permission.SYSTEM_ALERT.get(player) || Permission.SYSTEM_ALERTALL.get(player)) {
+            if (Permission.SYSTEM_ALERT.get(player)) {
                 for (String msg : message) {
                     player.sendMessage(msg);
                 }
@@ -73,6 +75,37 @@ public final class Utilities {
     }
     
     /**
+     * Gets the three dimensional distance between two Locations
+     * @param one the first location
+     * @param two the second location
+     * @return the distance
+     */
+    public static double getDistance3D(Location one, Location two) {
+		double toReturn = 0.0;
+		double xSqr = (two.getX() - one.getX()) * (two.getX() - one.getX());
+		double ySqr = (two.getY() - one.getY()) * (two.getY() - one.getY());
+		double zSqr = (two.getZ() - one.getZ()) * (two.getZ() - one.getZ());
+		double sqrt = Math.sqrt(xSqr + ySqr + zSqr);
+		toReturn = Math.abs(sqrt);
+		return toReturn;
+	}
+    
+    /**
+     * Gets the horizontal distance between two Locations
+     * @param one the first location
+     * @param two the second location
+     * @return the horizontal distance between the two points
+     */
+    public static double getHorizontalDistance(Location one, Location two) {
+		double toReturn = 0.0;
+		double xSqr = (two.getX() - one.getX()) * (two.getX() - one.getX());
+		double zSqr = (two.getZ() - one.getZ()) * (two.getZ() - one.getZ());
+		double sqrt = Math.sqrt(xSqr + zSqr);
+		toReturn = Math.abs(sqrt);
+		return toReturn;
+	}
+    
+    /**
      * Determine whether or not a player can stand in a given location, 
      * and do so correctly
      * 
@@ -92,7 +125,9 @@ public final class Utilities {
     	boolean northwest1 = otherBlock.getRelative(BlockFace.NORTH_WEST).getType() == Material.AIR;
     	boolean southeast1 = otherBlock.getRelative(BlockFace.SOUTH_EAST).getType() == Material.AIR;
     	boolean southwest1 = otherBlock.getRelative(BlockFace.SOUTH_WEST).getType() == Material.AIR;
-    	boolean overAir1 = otherBlock.getRelative(BlockFace.DOWN).getType() == Material.AIR; 
+    	boolean overAir1 = (otherBlock.getRelative(BlockFace.DOWN).getType() == Material.AIR
+    						|| otherBlock.getRelative(BlockFace.DOWN).getType() == Material.WATER
+    						|| otherBlock.getRelative(BlockFace.DOWN).getType() == Material.LAVA); 
 
     	return (center1 && north1 && east1 && south1 && west1 && northeast1 && southeast1
     			&& northwest1 && southwest1 && overAir1);
@@ -136,6 +171,34 @@ public final class Utilities {
     	return !isSand && !isGravel && !solid;
     }
     
+    /**
+     * Get optimal rotation for looking between to points
+     * @param one the first location
+     * @param two the second location
+     * @return the vector for the rotation
+     */
+    public static Vector getRotation(Location one, Location two) {
+   		double dx = two.getX() - one.getX();
+   		double dy = two.getY() - one.getY();
+   		double dz = two.getZ() - one.getZ();
+   		double distanceXZ = Math.sqrt(dx * dx + dz * dz);
+   		float yaw = (float) (Math.atan2(dz, dx) * 180.0D / Math.PI) - 90.0F;
+   		float pitch = (float) -(Math.atan2(dy, distanceXZ) * 180.0D / Math.PI);
+   		return new Vector(yaw, pitch, 0);
+    }
+
+    /**
+     * Clamp a rotation to fit into 180 degrees
+     * @param theta
+     * @return
+     */
+    public static double clamp180(double theta) {
+    	theta %= 360;
+    	if (theta >= 180.0D) theta -= 360.0D;
+    	if (theta < -180.0D) theta += 360.0D;
+    	return theta;
+    }
+
     /**
      * Determine if a player has a given Enchantment type
      * 

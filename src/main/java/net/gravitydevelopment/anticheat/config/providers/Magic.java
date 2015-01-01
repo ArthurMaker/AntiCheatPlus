@@ -37,6 +37,18 @@ package net.gravitydevelopment.anticheat.config.providers;
  */
 
 public interface Magic {
+	/**
+	 * Minimum time that can span between a person's attacks; Type=SYSTEM, Leniency=DECREASE.
+	 */
+	public long FIGHT_TIME_MIN();
+	/**
+	 * Maximum distance a player can attack something from; Type=DOUBLE, Leniency=INCREASE.
+	 */
+	public double FIGHT_MIN_DISTANCE();
+	/**
+	 * Maximum buffer angle a player can have when interacting with something; Type=INTEGER, Leniency=INCREASE
+	 */
+	public int DIRECTION_MAX_BUFFER();
     /**
      * Time to exempt a player from moving because of entering/exiting a vehicle; Type=SYSTEM, Leniency=INCREASE.
      */

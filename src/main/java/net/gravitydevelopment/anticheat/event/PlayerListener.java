@@ -338,7 +338,7 @@ public class PlayerListener extends EventListener {
                     log(result.getMessage(), player, CheckType.VCLIP);
                 }
             }
-            if (getCheckManager().willCheckQuick(player, CheckType.VCLIP) && event.getFrom().getY() > event.getTo().getY()) {
+            if (getCheckManager().willCheckQuick(player, CheckType.VCLIP)) {
                 CheckResult result = getBackend().checkNoclip(player);
                 if (result.failed()) {
                     if (!silentMode()) {

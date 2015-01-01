@@ -51,7 +51,7 @@ public class EventListener implements Listener {
                 AntiCheat.getManager().log(message);
                 for(Player thePlayer : AntiCheat.getPlugin().getServer().getOnlinePlayers())
                 {
-                	if(Permission.SYSTEM_ALERTALL.get(thePlayer) && !silentMode())
+                	if(Permission.SYSTEM_ALERTALL.get(thePlayer) && !silentMode() && AntiCheat.developerMode())
                 	{
                 		thePlayer.sendMessage(ChatColor.RED + "[AntiCheat+] " + message);
                 	}

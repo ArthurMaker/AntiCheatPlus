@@ -99,6 +99,16 @@ public class BlockListener extends EventListener {
                     noHack = false;
                 }
             }
+            if(getCheckManager().willCheck(player, CheckType.DIRECTION))
+            {
+            	result = getBackend().checkBlockRotation(player, event);
+            	if(result.failed())
+            	{
+            		event.setCancelled(!silentMode());
+            		log(result.getMessage(), player, CheckType.DIRECTION);
+                    noHack = false;
+            	}
+            }
         }
         if (noHack) {
             decrease(player);

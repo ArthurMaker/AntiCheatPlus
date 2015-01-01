@@ -42,9 +42,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class Backend {
     private List<String> isInWater = new ArrayList<String>();
@@ -100,6 +103,8 @@ public class Backend {
     private Map<String, TimedLocation> timedLoc = new HashMap<String, TimedLocation>();
     private Map<String, Integer> verticalCount = new HashMap<String, Integer>();
     private Map<String, Boolean> canMoveVert = new HashMap<String, Boolean>();
+    private Map<String, Long> timeInWater = new HashMap<String, Long>();
+    private Map<String, Long> lastAttack = new HashMap<String, Long>();
 
     private Magic magic;
     private AntiCheatManager manager = null;
@@ -183,6 +188,8 @@ public class Backend {
         timedLoc.remove(pN);
         verticalCount.remove(pN);
         canMoveVert.remove(pN);
+        timeInWater.remove(pN);
+        lastAttack.remove(pN);
     }
 
     public CheckResult checkFreeze(Player player, double from, double to) {
@@ -381,16 +388,32 @@ public class Backend {
                 max = magic.XZ_SPEED_MAX_SPRINT();
             }
             
-            if(Utilities.isInWater(player))
+            if(!timeInWater.containsKey(player.getName()))
             {
+            	timeInWater.put(player.getName(), System.currentTimeMillis());
+            }
+            if(Utilities.isInWater(player) 
+            		|| Utilities.cantStandAtWater(player.getLocation().getBlock()))
+            {
+            	
             	//Ignore this, it's Minecrafty stuff.
             	double multiPerLevel = 1.55;
-            	
+            
             	int level = Utilities.getLevelForEnchantment(player, DEPTH_STRIDER_ENCHANT);
             	if(level != -1)
             	{
             		max = max * (level*multiPerLevel);
+            	}else
+            	{
+            		if(System.currentTimeMillis() - timeInWater.get(player.getName()) < magic.TELEPORT_TIME()*1.5)
+                	{
+            			//As a supplement to the Waterwalk check, I give you: redundancy
+                		max = max * 0.65;
+                	}
             	}
+            }else
+            {
+            	timeInWater.put(player.getName(), System.currentTimeMillis());
             }
 
             float speed = player.getWalkSpeed();
@@ -509,7 +532,7 @@ public class Backend {
                         waterAscensionViolation.put(player.getName(), v + 1);
                     }
                 } else {
-                    waterAscensionViolation.put(player.getName(), 1);
+                    waterAscensionViolation.put(player.getName(), waterAscensionViolation.get(player.getName())-1);
                 }
             } else {
                 isInWater.remove(player.getName());
@@ -523,7 +546,8 @@ public class Backend {
     {
     	Block block = player.getEyeLocation().getBlock();
     	Block otherBlock = player.getLocation().getBlock();
-    	if(!Utilities.canStandWithin(block) || !Utilities.canStandWithin(otherBlock))
+    	if((!Utilities.canStandWithin(block) && !Utilities.canStandWithin(otherBlock)) 
+    			|| !Utilities.canStandWithin(block) && !isMovingExempt(player))
     	{
     		return new CheckResult(CheckResult.Result.FAILED, player.getName() + 
     				" attempted to pass through a solid block.");
@@ -612,6 +636,7 @@ public class Backend {
             	if(Math.abs(y1 - lastYcoord.get(name)) <= (magic.Y_HOVER_BUFFER() * 0.75) 
             			&& (overAir || overWater))
             	{
+            		
             		hoverTicks.put(name, hoverTicks.get(name) + 1);
             		if(hoverTicks.get(name) > magic.Y_HOVER_TIME())
             		{
@@ -651,15 +676,18 @@ public class Backend {
                 long i = System.currentTimeMillis() - lastYtime.get(name);
                 double diff = magic.Y_MAXDIFF() + (Utilities.isStair(player.getLocation().add(0, -1, 0).getBlock()) ? 0.5 : 0.0);
                 if ((y1 - lastYcoord.get(name)) > diff && i < magic.Y_TIME()) {
-                    Location g = player.getLocation();
-                    yAxisViolations.put(name, yAxisViolations.get(name) + 1);
-                    yAxisLastViolation.put(name, System.currentTimeMillis());
-                    if (!silentMode()) {
-                        g.setY(lastYcoord.get(name));
-                        if (g.getBlock().getType() == Material.AIR) {
-                            player.teleport(g);
-                        }
-                    }
+                	if(player != null)
+                	{
+                		Location g = player.getLocation();
+                		yAxisViolations.put(name, yAxisViolations.get(name) + 1);
+                		yAxisLastViolation.put(name, System.currentTimeMillis());
+                		if (!silentMode()) {
+                			g.setY(lastYcoord.get(name));
+                			if (g.getBlock().getType() == Material.AIR) {
+                				player.teleport(g);
+                			}
+                		}
+                	}
                     return new CheckResult(CheckResult.Result.FAILED, player.getName() + " tried to fly on y-axis in " + i + " ms (min =" + magic.Y_TIME() + ")");
                 } else {
                     if ((y1 - lastYcoord.get(name)) > magic.Y_MAXDIFF() + 1 || (System.currentTimeMillis() - lastYtime.get(name)) > magic.Y_TIME()) {
@@ -1041,6 +1069,98 @@ public class Backend {
             return PASS;
         }
     }
+    
+    public CheckResult checkFightSpeed(Player player)
+    {
+    	String name = player.getName();
+    	if(!lastAttack.containsKey(name))
+    	{
+    		lastAttack.put(name, System.currentTimeMillis());
+    	}
+    	long math = System.currentTimeMillis() - lastAttack.get(name);
+    	if(math < magic.FIGHT_TIME_MIN())
+    	{
+    		return new CheckResult(CheckResult.Result.FAILED, 
+    				name + " attempted to attack faster than normal. (min="+magic.FIGHT_TIME_MIN()
+    				+ " | them=" + math);
+    	}
+    	return PASS;
+    }
+    
+    public CheckResult checkFightDistance(Player player, LivingEntity damaged)
+    {
+    	String name = player.getName();
+    	Location entityLoc = damaged.getLocation().add(0, damaged.getEyeHeight(), 0);
+    	Location playerLoc = player.getLocation().add(0, player.getEyeHeight(), 0);
+
+    	double distance = Utilities.getDistance3D(entityLoc, playerLoc);
+    	if(distance > magic.FIGHT_MIN_DISTANCE())
+    	{
+    		return new CheckResult(CheckResult.Result.FAILED, 
+    				name + " attempted to attack something too far away. (min="+magic.FIGHT_MIN_DISTANCE()
+    				+ " | them=" + distance);
+    	}
+    	return PASS;
+    }
+    
+    public CheckResult checkFightRotation(Player player, LivingEntity damaged)
+    {
+    	double offset = 0.0D;
+
+    	Location entityLoc = damaged.getLocation().add(0, damaged.getEyeHeight(), 0);
+    	Location playerLoc = player.getLocation().add(0, player.getEyeHeight(), 0);
+
+    	Vector playerRotation = new Vector(playerLoc.getYaw(), playerLoc.getPitch(), 0);
+    	Vector expectedRotation = Utilities.getRotation(playerLoc, entityLoc);
+
+    	double deltaYaw = Utilities.clamp180(playerRotation.getX() - expectedRotation.getX());
+    	double deltaPitch = Utilities.clamp180(playerRotation.getY() - expectedRotation.getY());
+
+    	double horizontalDistance = Utilities.getHorizontalDistance(playerLoc, entityLoc);
+    	double distance = Utilities.getDistance3D(playerLoc, entityLoc);
+
+    	double offsetX = deltaYaw * horizontalDistance * distance;
+    	double offsetY = deltaPitch * Math.abs(entityLoc.getY() - playerLoc.getY()) * distance;
+
+    	offset += Math.abs(offsetX);
+    	offset += Math.abs(offsetY);
+
+    	if (offset > magic.DIRECTION_MAX_BUFFER()) {
+    		return new CheckResult(CheckResult.Result.FAILED, 
+    				player.getName() + " attempted to attack something without looking at it.");
+    	}
+    	return PASS;
+
+    }
+    
+    public CheckResult checkBlockRotation(Player player, BlockBreakEvent event)
+    {
+    	double offset = 0.0D;
+
+    	Location blockLoc = event.getBlock().getLocation().add(0.5, 0.6, 0.5);
+    	Location playerLoc = player.getLocation().add(0, player.getEyeHeight(), 0);
+
+    	Vector playerRotation = new Vector(playerLoc.getYaw(), playerLoc.getPitch(), 0);
+    	Vector expectedRotation = Utilities.getRotation(playerLoc, blockLoc);
+
+    	double deltaYaw = Utilities.clamp180(playerRotation.getX() - expectedRotation.getX());
+    	double deltaPitch = Utilities.clamp180(playerRotation.getY() - expectedRotation.getY());
+
+    	double horizontalDistance = Utilities.getHorizontalDistance(playerLoc, blockLoc);
+    	double distance = Utilities.getDistance3D(playerLoc, blockLoc);
+
+    	double offsetX = deltaYaw * horizontalDistance * distance;
+    	double offsetY = deltaPitch * Math.abs(blockLoc.getY() - playerLoc.getY()) * distance;
+
+    	offset += Math.abs(offsetX);
+    	offset += Math.abs(offsetY);
+
+    	if (offset > magic.DIRECTION_MAX_BUFFER()) {
+    		return new CheckResult(CheckResult.Result.FAILED, 
+    				player.getName() + " attempted to break a block without looking at it.");
+    	}
+    	return PASS;
+    }
 
     public CheckResult checkAnimation(Player player, Entity e) {
         if (!justAnimated(player)) {
@@ -1218,6 +1338,21 @@ public class Backend {
 
     public void logJoin(final Player player) {
         movingExempt.put(player.getName(), System.currentTimeMillis() + magic.JOIN_TIME());
+        if(player.getLocation().getBlock().getType() == Material.AIR)
+        {
+        	Location setLocation = player.getLocation();
+        	int x = player.getLocation().getBlockX();
+        	int z = player.getLocation().getBlockZ();
+        	for(int y = player.getLocation().getBlockY(); y > 0; y--)
+        	{
+        		if(player.getWorld().getBlockAt(x, y, z).getType().isSolid())
+        		{
+        			setLocation = new Location(player.getWorld(), x, y + 1, z);
+        			break;
+        		}
+        	}
+        	player.teleport(setLocation);
+        }
     }
 
     public boolean isMovingExempt(Player player) {

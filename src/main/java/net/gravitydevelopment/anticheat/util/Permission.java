@@ -22,6 +22,7 @@ import org.bukkit.command.CommandSender;
 
 public enum Permission {
     /* Check Nodes */
+	CHECK_EXEMPT,
     CHECK_ZOMBE_FLY,
     CHECK_ZOMBE_NOCLIP,
     CHECK_ZOMBE_CHEAT,
@@ -51,6 +52,7 @@ public enum Permission {
     CHECK_FASTINVENTORY,
     CHECK_AUTOTOOL,
     CHECK_MOREPACKETS,
+    CHECK_DIRECTION,
 
     /* System Nodes */
     SYSTEM_LOG,

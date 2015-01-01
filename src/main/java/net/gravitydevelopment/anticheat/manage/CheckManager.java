@@ -21,6 +21,8 @@ package net.gravitydevelopment.anticheat.manage;
 import net.gravitydevelopment.anticheat.AntiCheat;
 import net.gravitydevelopment.anticheat.check.CheckType;
 import net.gravitydevelopment.anticheat.config.Configuration;
+import net.gravitydevelopment.anticheat.util.Permission;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -157,7 +159,8 @@ public class CheckManager {
         return
                 isActive(type)
                         && !isExempt(player, type)
-                        && !type.checkPermission(player);
+                        && !type.checkPermission(player)
+                        && !player.hasPermission(Permission.CHECK_EXEMPT.toString())	;        				
     }
 
     /**
@@ -172,7 +175,8 @@ public class CheckManager {
                 && checkInWorld(player)
                 && !isExempt(player, type)
                 && !type.checkPermission(player)
-                && !isOpExempt(player);
+                && !isOpExempt(player)
+                && !player.hasPermission(Permission.CHECK_EXEMPT.toString());
         AntiCheat.debugLog("Check " + type + (check ? " run " : " not run ") + "on " + player.getName());
         return check;
     }
