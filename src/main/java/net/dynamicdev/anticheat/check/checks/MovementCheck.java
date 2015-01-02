@@ -5,6 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.AntiCheatCheck;
+import net.dynamicdev.anticheat.check.CheckResult;
+import net.dynamicdev.anticheat.manage.AntiCheatManager;
+import net.dynamicdev.anticheat.util.Distance;
+import net.dynamicdev.anticheat.util.SimpleLocation;
+import net.dynamicdev.anticheat.util.TimedLocation;
+import net.dynamicdev.anticheat.util.Utilities;
+
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,14 +22,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.potion.PotionEffectType;
-
-import net.dynamicdev.anticheat.AntiCheat;
-import net.dynamicdev.anticheat.check.AntiCheatCheck;
-import net.dynamicdev.anticheat.check.CheckResult;
-import net.dynamicdev.anticheat.manage.AntiCheatManager;
-import net.dynamicdev.anticheat.util.Distance;
-import net.dynamicdev.anticheat.util.TimedLocation;
-import net.dynamicdev.anticheat.util.Utilities;
 
 public class MovementCheck extends AntiCheatCheck {
 
@@ -50,8 +51,14 @@ public class MovementCheck extends AntiCheatCheck {
     private Map<String, Integer> velocitytrack = new HashMap<String, Integer>();
     private Map<String, Long> movingExempt = new HashMap<String, Long>();
     private Map<String, Long> sneakExempt = new HashMap<String, Long>();
+    private Map<String, Integer> timerBuffer = new HashMap<String, Integer>();
+    private Map<String, Integer> glideBuffer = new HashMap<String, Integer>();
+    private Map<String, Double> lastYDelta = new HashMap<String, Double>();
+    private Map<String, SimpleLocation> lastTickLocation = new HashMap<String, SimpleLocation>();
     
-	
+    private static final double TIME_SECOND = 1.0;
+    private static final double MIN_Y_DELTA = 0.3;
+    
 	public MovementCheck(AntiCheatManager instance) {
 		super(instance);
 	}
@@ -87,6 +94,7 @@ public class MovementCheck extends AntiCheatCheck {
         yAxisLastViolation.remove(player.getName());
         lastYcoord.remove(player.getName());
         lastYtime.remove(player.getName());
+        lastTickLocation.put(player.getName(), new SimpleLocation(player.getLocation()));
         timedLoc.put(player.getName(), new TimedLocation(player.getLocation(), System.currentTimeMillis()));
 	}
 	
@@ -221,6 +229,13 @@ public class MovementCheck extends AntiCheatCheck {
     	{
     		speedViolation.put(player.getName(), 1);
     	}
+    	if(!lastTickLocation.containsKey(player.getName()))
+    	{
+    		lastTickLocation.put(player.getName(), new SimpleLocation(player.getLocation()));
+    	}
+    	SimpleLocation lastLocation = lastTickLocation.get(player.getName());
+    	SimpleLocation currentLocation = new SimpleLocation(player.getLocation());
+    	lastTickLocation.put(player.getName(), new SimpleLocation(player.getLocation()));
         if (!AntiCheat.getManager().getBackend().isSpeedExempt(player) && player.getVehicle() == null) {
             String reason = "";
             double max = magic.XZ_SPEED_MAX();
@@ -255,6 +270,7 @@ public class MovementCheck extends AntiCheatCheck {
             {
             	timeInWater.put(player.getName(), System.currentTimeMillis());
             }
+            /* TODO: Improve ALLLLL of this
             if(Utilities.isInWater(player) 
             		|| Utilities.cantStandAtWater(player.getLocation().getBlock()))
             {
@@ -278,7 +294,17 @@ public class MovementCheck extends AntiCheatCheck {
             {
             	timeInWater.put(player.getName(), System.currentTimeMillis());
             }
+            */
 
+          //Ignore this, it's Minecrafty stuff.
+        	double multiPerLevel = 1.55;
+            
+            int level = Utilities.getLevelForEnchantment(player, DEPTH_STRIDER_ENCHANT);
+        	if(level != -1)
+        	{
+        		max = max * (level*multiPerLevel);
+        	}
+            
             float speed = player.getWalkSpeed();
             max += speed > 0 ? player.getWalkSpeed() - 0.2f : 0;
             
@@ -299,8 +325,8 @@ public class MovementCheck extends AntiCheatCheck {
             		max *= magic.XZ_SPEED_WEB_MULTIPLIER();
             	}
             }
-
-            if (x > max || z > max) {
+            									// Handle really large teleports.
+            if (x > max || z > max || Utilities.getHorizontalDistance(lastLocation, currentLocation) > magic.XZ_TICK_MAX()) {
                 int num = this.increment(player, speedViolation, magic.SPEED_MAX());
                 if (num >= magic.SPEED_MAX()) {
                     return new CheckResult(CheckResult.Result.FAILED, player.getName() + "'s speed was too high " + reason + num + " times in a row (max=" + magic.SPEED_MAX() + ", speed=" + (x > z ? x : z) + ", max speed=" + max + ")");
@@ -465,7 +491,10 @@ public class MovementCheck extends AntiCheatCheck {
             	{
             		if(lastDelta < 0)
             		{
-
+            			if(!yAxisViolations.containsKey(name))
+            			{
+            				yAxisViolations.put(name, 0);
+            			}
             			yAxisViolations.put(name, yAxisViolations.get(name) + 1);
             			if(yAxisViolations.get(name) > magic.Y_MAXVIOLATIONS())
             			{
@@ -495,10 +524,9 @@ public class MovementCheck extends AntiCheatCheck {
         		{
         			hoverTicks.put(name, 0);
         		}
-            	boolean overAir = Utilities.cantStandAtBetter(player.getLocation().getBlock());
-            	boolean overWater = Utilities.cantStandAtWater(player.getLocation().getBlock());
+            	boolean overAir = Utilities.cantStandAtBetter(player.getLocation().getBlock()) && !player.isSneaking();
             	if(Math.abs(y1 - lastYcoord.get(name)) <= (magic.Y_HOVER_BUFFER() * 0.75) 
-            			&& (overAir || overWater))
+            			&& (overAir))
             	{
             		
             		hoverTicks.put(name, hoverTicks.get(name) + 1);
@@ -571,45 +599,95 @@ public class MovementCheck extends AntiCheatCheck {
     		//NPC's with no names? C'mon.
     		return PASS;
     	}
-        String name = player.getName();
+    	String name = player.getName();
         if(!stepTime.containsKey(name))
         {
         	stepTime.put(name, System.currentTimeMillis());
         }
+        if(!timerBuffer.containsKey(name))
+        {
+        	timerBuffer.put(name, magic.TIMER_STEP_CHECK());
+        }
+        timerBuffer.put(name, timerBuffer.get(name) - 1);
         if(!AntiCheat.getManager().getBackend().isMovingExempt(player))
         {
-        	long currentTime = System.currentTimeMillis();
-        	long math = currentTime - stepTime.get(name);
-        	stepTime.put(name, currentTime);
-        	if(math < magic.TIMER_TIMEMIN())
+        	if(timerBuffer.get(name) < 0)
         	{
-        		if(!steps.containsKey(name))
+        		if(!silentMode())
         		{
-        			steps.put(name, 1);
+        			sendFormattedMessage(player, "Modification of game timer detected. Please stand still for a bit.");
         		}
-        		else
-        		{
-        			steps.put(name, steps.get(name) + 1);
-        		}
-        		if(steps.get(name) > magic.TIMER_STEP_CHECK())
-        		{
-        			if(!silentMode())
-        			{
-        				sendFormattedMessage(player, "Modification of game timer detected. Please stand still for a bit.");
-        			}
-        			return new CheckResult(CheckResult.Result.FAILED, 
-        					name + " attempted to send packets too fast; min_delta=" 
-        							+ magic.TIMER_TIMEMIN() + " | their's=" + math);
-        		}
+        		incrementTimerBuffer(name);
+        		return new CheckResult(CheckResult.Result.FAILED, 
+        				name + " attempted to send packets too fast!");
         	}else
         	{
-        		if(steps.get(name) >= 2)
-    			{
-    				steps.put(name, steps.get(name) - 2);
-    			}
+        		incrementTimerBuffer(name);
         	}
         }
         return PASS;
+    }
+    
+    private void incrementTimerBuffer(String name)
+    {
+    	//To account for server lag
+    	double timeSince = (System.currentTimeMillis() - stepTime.get(name)) / 1000;
+    	if(timeSince > TIME_SECOND)
+    	{
+    		double allowedPackets = timeSince * magic.TIMER_TIMEMIN();
+    		//Let's not go too crazy here...
+    		if(timerBuffer.get(name) > 65)
+    		{
+    			timerBuffer.put(name, 65);
+    		}
+    		else
+    		{
+    			timerBuffer.put(name, (int) (timerBuffer.get(name) + allowedPackets));
+    		}
+
+        	stepTime.put(name, System.currentTimeMillis());
+    	}
+    }
+    
+    /**
+     * Must always be run AFTER the flight check, combats glide hacks
+     * @param player the player to check
+     * @return failed if they fail it, pass if not
+     */
+    public CheckResult checkGlide(Player player)
+    {
+    	String name = player.getName();
+    	if(!glideBuffer.containsKey(name))
+    	{
+    		glideBuffer.put(name, 0);
+    	}
+    	if(!lastYDelta.containsKey(name))
+    	{
+    		lastYDelta.put(name, 0.0);
+    	}
+    	double currentY = player.getLocation().getY();
+    	double math = currentY - lastYcoord.get(name);
+    	if(math < 0 && !AntiCheat.getManager().getBackend().isMovingExempt(player))
+    	{
+    		if(math <= lastYDelta.get(name) && !(player.getEyeLocation().getBlock().getType() == Material.LADDER)
+    				&& !Utilities.isInWater(player) && !Utilities.isInWeb(player)
+    				&& Utilities.cantStandAtSingle(player.getLocation().getBlock()))
+    		{
+    			int currentBuffer = glideBuffer.get(name);
+    			glideBuffer.put(name, currentBuffer + 1);
+    			if((currentBuffer + 1) >= magic.FLIGHT_LIMIT())
+    			{
+    				if(!silentMode())
+    				{
+    					sendFormattedMessage(player, "Fly hacking on the y-axis detected.");
+    				}
+    				lastYDelta.put(name, math);
+    				return new CheckResult(CheckResult.Result.FAILED, name + " attempted to fall too slowly!");
+    			}
+    		}
+    	}
+    	lastYDelta.put(name, math);
+    	return PASS;
     }
 
 

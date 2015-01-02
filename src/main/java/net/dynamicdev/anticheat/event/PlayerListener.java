@@ -320,6 +320,17 @@ public class PlayerListener extends EventListener {
                     log(result.getMessage(), player, CheckType.FLY);
                 }
             }
+            //ALWAYS RUN GLIDE AFTER FLY
+            if (getCheckManager().willCheckQuick(player, CheckType.FLY) && !player.isFlying())
+            {
+            	CheckResult result = getBackend().getMovementCheck().checkGlide(player);
+            	if (result.failed()) {
+                    if (!silentMode()) {
+                        event.setTo(user.getGoodLocation(from.clone()));
+                    }
+                    log(result.getMessage(), player, CheckType.FLY);
+                }
+            }
             if (getCheckManager().willCheckQuick(player, CheckType.VCLIP) && event.getFrom().getY() > event.getTo().getY()) {
                 CheckResult result = getBackend().getMovementCheck().checkVClip(player, new Distance(event.getFrom(), event.getTo()));
                 if (result.failed()) {
@@ -386,14 +397,17 @@ public class PlayerListener extends EventListener {
                         changed = true;
                     }
                     if ((event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ())) {
-                        CheckResult result1 = getBackend().getMovementCheck().checkTimer(player);
-                        if(result1.failed()) {
-                            if (!silentMode()) {
-                                event.setTo(user.getGoodLocation(from.clone()));
-                            }
-                            log(result1.getMessage(), player, CheckType.MOREPACKETS);
-                            changed = true;
-                        }
+                    	if(getCheckManager().willCheckQuick(player, CheckType.MOREPACKETS))
+                    	{
+                    		CheckResult result1 = getBackend().getMovementCheck().checkTimer(player);
+                    		if(result1.failed()) {
+                    			if (!silentMode()) {
+                    				event.setTo(user.getGoodLocation(from.clone()));
+                    			}
+                    			log(result1.getMessage(), player, CheckType.MOREPACKETS);
+                    			changed = true;
+                    		}
+                    	}
                     }
                     
                 }
