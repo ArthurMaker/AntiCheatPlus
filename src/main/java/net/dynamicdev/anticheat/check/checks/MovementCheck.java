@@ -74,7 +74,6 @@ public class MovementCheck extends AntiCheatCheck {
         return player.hasPotionEffect(PotionEffectType.SPEED);
     }
 
-
     public boolean isAscending(Player player) {
         return isAscending.contains(player.getName());
     }
