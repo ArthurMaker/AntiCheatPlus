@@ -1,6 +1,6 @@
 authors: [m1enkrafft_man, Gravity]
 description: AntiCheat helps easily identify and block malicious users on your server.
-main: net.gravitydevelopment.anticheat.AntiCheat
+main: net.dynamicdev.anticheat.AntiCheat
 name: AntiCheatPlus
 softdepend: [ProtocolLib]
 startup: postworld
@@ -165,6 +165,8 @@ permissions:
       anticheat.check.longreach: true
       anticheat.check.projectile: true
       anticheat.check.itemspam: true
+      anticheat.check.direction: true
+      anticheat.check.morepackets: true
       anticheat.check.visual: true
       anticheat.check.vclip: true
       anticheat.check.fastinventory: true
