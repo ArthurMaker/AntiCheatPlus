@@ -19,6 +19,8 @@
 package net.gravitydevelopment.anticheat.util;
 
 import static org.junit.Assert.*;
+import net.dynamicdev.anticheat.util.Group;
+
 import org.junit.Test;
 
 public class GroupTest {

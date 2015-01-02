@@ -16,11 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.check;
+package net.dynamicdev.anticheat.check;
 
-import net.gravitydevelopment.anticheat.api.CheckFailEvent;
-import net.gravitydevelopment.anticheat.util.User;
-import net.gravitydevelopment.anticheat.util.Permission;
+import net.dynamicdev.anticheat.api.CheckFailEvent;
+import net.dynamicdev.anticheat.util.Permission;
+import net.dynamicdev.anticheat.util.User;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

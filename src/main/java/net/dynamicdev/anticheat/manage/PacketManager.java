@@ -1,9 +1,10 @@
-package net.gravitydevelopment.anticheat.manage;
+package net.dynamicdev.anticheat.manage;
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.*;
-import net.gravitydevelopment.anticheat.AntiCheat;
+
+import net.dynamicdev.anticheat.AntiCheat;
 
 public class PacketManager {
 

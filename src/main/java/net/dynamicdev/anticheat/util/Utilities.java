@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util;
+package net.dynamicdev.anticheat.util;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.AntiCheat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

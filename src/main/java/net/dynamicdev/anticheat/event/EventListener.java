@@ -16,15 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.event;
+package net.dynamicdev.anticheat.event;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.Backend;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.config.Configuration;
-import net.gravitydevelopment.anticheat.manage.*;
-import net.gravitydevelopment.anticheat.util.Permission;
-import net.gravitydevelopment.anticheat.util.User;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.Backend;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.config.Configuration;
+import net.dynamicdev.anticheat.manage.*;
+import net.dynamicdev.anticheat.util.Permission;
+import net.dynamicdev.anticheat.util.User;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

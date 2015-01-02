@@ -16,13 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util.rule;
+package net.dynamicdev.anticheat.util.rule;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.util.User;
-import net.gravitydevelopment.anticheat.util.Group;
-import net.gravitydevelopment.anticheat.util.Utilities;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.util.Group;
+import net.dynamicdev.anticheat.util.User;
+import net.dynamicdev.anticheat.util.Utilities;
+
 import org.bukkit.GameMode;
 
 import java.lang.reflect.Constructor;
@@ -44,7 +45,7 @@ import java.util.TreeMap;
  * <ul>
  *   <li>Check
  *     <ul>
- *       <li>Contains all valid checks as listed in {@link net.gravitydevelopment.anticheat.check.CheckType}</li>
+ *       <li>Contains all valid checks as listed in {@link net.dynamicdev.anticheat.check.CheckType}</li>
  *       <li>Will return the number of times this user has failed the given check</li>
  *       <li><b>Example:</b> Check_SPRINT</li>
  *     </ul>
@@ -76,7 +77,7 @@ import java.util.TreeMap;
  * <p/>
  * The Rule class itself is not an functional rule setup,
  * it is inherited and made functional by different implementations of the rule parser.<br />
- * The only current Rule implementation is the {@link net.gravitydevelopment.anticheat.util.rule.ConditionalRule}
+ * The only current Rule implementation is the {@link net.dynamicdev.anticheat.util.rule.ConditionalRule}
  */
 public class Rule {
 
@@ -145,7 +146,7 @@ public class Rule {
     /**
      * Get the type of rule this is
      *
-     * @return a {@link net.gravitydevelopment.anticheat.util.rule.Rule.Type}
+     * @return a {@link net.dynamicdev.anticheat.util.rule.Rule.Type}
      */
     public Type getType() {
         return type;

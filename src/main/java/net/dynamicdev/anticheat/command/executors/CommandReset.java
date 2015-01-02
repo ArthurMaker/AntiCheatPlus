@@ -16,12 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.command.executors;
+package net.dynamicdev.anticheat.command.executors;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.command.CommandBase;
-import net.gravitydevelopment.anticheat.util.Permission;
-import net.gravitydevelopment.anticheat.util.User;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.command.CommandBase;
+import net.dynamicdev.anticheat.util.Permission;
+import net.dynamicdev.anticheat.util.User;
+
 import org.bukkit.command.CommandSender;
 
 public class CommandReset extends CommandBase {
@@ -46,7 +47,7 @@ public class CommandReset extends CommandBase {
                 user.resetLevel();
                 XRAY_TRACKER.reset(args[0]);
                 user.clearMessages();
-                AntiCheat.getManager().getBackend().resetChatLevel(user);
+                AntiCheat.getManager().getBackend().getChatCheck().resetChatLevel(user);
                 cs.sendMessage(args[0] + GREEN + " has been reset.");
             } else {
                 cs.sendMessage(RED + "Player: " +args[0] + " not found.");

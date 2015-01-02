@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.xray;
+package net.dynamicdev.anticheat.xray;
 
 import java.util.Map;
 

@@ -16,10 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.config;
+package net.dynamicdev.anticheat.config;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.config.yaml.CommentedConfiguration;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.config.yaml.CommentedConfiguration;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 

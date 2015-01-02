@@ -16,12 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.config.holders.mysql;
+package net.dynamicdev.anticheat.config.holders.mysql;
 
-import net.gravitydevelopment.anticheat.config.Configuration;
-import net.gravitydevelopment.anticheat.config.ConfigurationTable;
-import net.gravitydevelopment.anticheat.config.providers.Groups;
-import net.gravitydevelopment.anticheat.util.Group;
+import net.dynamicdev.anticheat.config.Configuration;
+import net.dynamicdev.anticheat.config.ConfigurationTable;
+import net.dynamicdev.anticheat.config.providers.Groups;
+import net.dynamicdev.anticheat.util.Group;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

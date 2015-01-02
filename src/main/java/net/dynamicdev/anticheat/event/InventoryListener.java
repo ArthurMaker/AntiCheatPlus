@@ -16,12 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.event;
+package net.dynamicdev.anticheat.event;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.util.User;
-import net.gravitydevelopment.anticheat.check.CheckResult;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.CheckResult;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.util.User;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -36,7 +37,7 @@ public class InventoryListener extends EventListener {
         if (!event.isRightClick() && !event.isShiftClick() && event.getWhoClicked() instanceof Player) {
             Player player = (Player) event.getWhoClicked();
             if (getCheckManager().willCheck(player, CheckType.FAST_INVENTORY)) {
-                CheckResult result = getBackend().checkInventoryClicks(player);
+                CheckResult result = getBackend().getInventoryCheck().checkInventoryClicks(player);
                 if (result.failed()) {
                     if (!silentMode()) {
                         //getUserManager().getUser(player.getName()).restoreInventory(event.getInventory());

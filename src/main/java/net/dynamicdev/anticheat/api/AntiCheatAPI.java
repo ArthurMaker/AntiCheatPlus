@@ -16,15 +16,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.api;
+package net.dynamicdev.anticheat.api;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.manage.AntiCheatManager;
-import net.gravitydevelopment.anticheat.manage.CheckManager;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.manage.UserManager;
-import net.gravitydevelopment.anticheat.util.Group;
-import net.gravitydevelopment.anticheat.xray.XRayTracker;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.manage.AntiCheatManager;
+import net.dynamicdev.anticheat.manage.CheckManager;
+import net.dynamicdev.anticheat.manage.UserManager;
+import net.dynamicdev.anticheat.util.Group;
+import net.dynamicdev.anticheat.xray.XRayTracker;
+
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -147,7 +148,7 @@ public class AntiCheatAPI {
     }
 
     /**
-     * Get a user's {@link net.gravitydevelopment.anticheat.util.Group}
+     * Get a user's {@link net.dynamicdev.anticheat.util.Group}
      *
      * @param player Player whose group to find
      * @return The player's group
@@ -160,7 +161,7 @@ public class AntiCheatAPI {
      * Get all configured Groups
      *
      * @return List of all groups
-     * @see net.gravitydevelopment.anticheat.util.Group
+     * @see net.dynamicdev.anticheat.util.Group
      */
     public static List<Group> getGroups() {
         return getManager().getConfiguration().getGroups().getGroups();

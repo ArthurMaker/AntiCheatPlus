@@ -16,13 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.event;
+package net.dynamicdev.anticheat.event;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.CheckResult;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.util.Distance;
-import net.gravitydevelopment.anticheat.util.Utilities;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.CheckResult;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.util.Distance;
+import net.dynamicdev.anticheat.util.Utilities;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
@@ -45,7 +45,7 @@ public class EntityListener extends EventListener {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             if (getCheckManager().willCheck(player, CheckType.FAST_BOW)) {
-                CheckResult result = getBackend().checkFastBow(player, event.getForce());
+                CheckResult result = getBackend().getEntityCheck().checkFastBow(player, event.getForce());
                 if (result.failed()) {
                     event.setCancelled(!silentMode());
                     log(result.getMessage(), player, CheckType.FAST_BOW);
@@ -63,13 +63,13 @@ public class EntityListener extends EventListener {
         if (event.getEntity() instanceof Player && event.getRegainReason() == RegainReason.SATIATED) {
             Player player = (Player) event.getEntity();
             if (getCheckManager().willCheck(player, CheckType.FAST_HEAL)) {
-                CheckResult result = getBackend().checkFastHeal(player);
+                CheckResult result = getBackend().getEntityCheck().checkFastHeal(player);
                 if (result.failed()) {
                     event.setCancelled(!silentMode());
                     log(result.getMessage(), player, CheckType.FAST_HEAL);
                 } else {
                     decrease(player);
-                    getBackend().logHeal(player);
+                    getBackend().getEntityCheck().logHeal(player);
                 }
             }
         }
@@ -83,7 +83,7 @@ public class EntityListener extends EventListener {
             Player player = (Player) event.getEntity();
             if (player.getFoodLevel() < event.getFoodLevel() && getCheckManager().willCheck(player, CheckType.FAST_EAT)) // Make sure it's them actually gaining a food level
             {
-                CheckResult result = getBackend().checkFastEat(player);
+                CheckResult result = getBackend().getEntityCheck().checkFastEat(player);
                 if (result.failed()) {
                     event.setCancelled(!silentMode());
                     log(result.getMessage(), player, CheckType.FAST_EAT);
@@ -111,7 +111,7 @@ public class EntityListener extends EventListener {
                     }
                 }
                 if (Utilities.hasArmorEnchantment(player, Enchantment.THORNS)) {
-                    getBackend().logAnimation(player);
+                    getBackend().getBlockCheck().logAnimation(player);
                 }
                 if (e.getDamager() instanceof Player) {
                     Player p = (Player) e.getDamager();
@@ -120,7 +120,7 @@ public class EntityListener extends EventListener {
                     getBackend().logDamage(player, value);
                     if (getCheckManager().willCheck(p, CheckType.LONG_REACH)) {
                         Distance distance = new Distance(player.getLocation(), p.getLocation());
-                        CheckResult result = getBackend().checkLongReachDamage(player, distance.getXDifference(), distance.getYDifference(), distance.getZDifference());
+                        CheckResult result = getBackend().getEntityCheck().checkLongReachDamage(player, distance.getXDifference(), distance.getYDifference(), distance.getZDifference());
                         if (result.failed()) {
                             event.setCancelled(!silentMode());
                             log(result.getMessage(), p, CheckType.LONG_REACH);
@@ -139,7 +139,7 @@ public class EntityListener extends EventListener {
                 Player player = (Player) e.getDamager();
                 getBackend().logDamage(player, 1);
                 if (getCheckManager().willCheck(player, CheckType.AUTOTOOL)) {
-                    CheckResult result = getBackend().checkAutoTool(player);
+                    CheckResult result = getBackend().getBlockCheck().checkAutoTool(player);
                     if (result.failed()) {
                         event.setCancelled(!silentMode());
                         log(result.getMessage(), player, CheckType.AUTOTOOL);
@@ -147,7 +147,7 @@ public class EntityListener extends EventListener {
                     }
                 }
                 if (getCheckManager().willCheck(player, CheckType.FORCEFIELD)) {
-                    CheckResult result = getBackend().checkFightSpeed(player);
+                    CheckResult result = getBackend().getEntityCheck().checkFightSpeed(player);
                     if (result.failed()) {
                         event.setCancelled(!silentMode());
                         log(result.getMessage(), player, CheckType.AUTOTOOL);
@@ -155,7 +155,7 @@ public class EntityListener extends EventListener {
                     }
                 }
                 if (getCheckManager().willCheck(player, CheckType.FORCEFIELD)) {
-                    CheckResult result = getBackend().checkSprintDamage(player);
+                    CheckResult result = getBackend().getEntityCheck().checkSprintDamage(player);
                     if (result.failed()) {
                         event.setCancelled(!silentMode());
                         log(result.getMessage(), player, CheckType.FORCEFIELD);
@@ -167,7 +167,7 @@ public class EntityListener extends EventListener {
                 	if(event.getEntity() instanceof LivingEntity)
                 	{
                 		LivingEntity damaged = (LivingEntity) event.getEntity();
-                		CheckResult result = getBackend().checkFightRotation(player, damaged);
+                		CheckResult result = getBackend().getEntityCheck().checkFightRotation(player, damaged);
                 		if (result.failed()) {
                             event.setCancelled(!silentMode());
                             log(result.getMessage(), player, CheckType.DIRECTION);
@@ -180,7 +180,7 @@ public class EntityListener extends EventListener {
                 	if(event.getEntity() instanceof LivingEntity)
                 	{
                 		LivingEntity damaged = (LivingEntity) event.getEntity();
-                		CheckResult result = getBackend().checkFightDistance(player, damaged);
+                		CheckResult result = getBackend().getEntityCheck().checkFightDistance(player, damaged);
                 		if (result.failed()) {
                             event.setCancelled(!silentMode());
                             log(result.getMessage(), player, CheckType.FORCEFIELD);
@@ -189,7 +189,7 @@ public class EntityListener extends EventListener {
                 	}
                 }
                 if (getCheckManager().willCheck(player, CheckType.NO_SWING)) {
-                    CheckResult result = getBackend().checkAnimation(player, event.getEntity());
+                    CheckResult result = getBackend().getEntityCheck().checkAnimation(player, event.getEntity());
                     if (result.failed()) {
                         event.setCancelled(!silentMode());
                         log(result.getMessage(), player, CheckType.NO_SWING);
@@ -197,7 +197,7 @@ public class EntityListener extends EventListener {
                     }
                 }
                 if (getCheckManager().willCheck(player, CheckType.FORCEFIELD)) {
-                    CheckResult result = getBackend().checkSight(player, e.getEntity());
+                    CheckResult result = getBackend().getEntityCheck().checkSight(player, e.getEntity());
                     if (result.failed()) {
                         event.setCancelled(!silentMode());
                         log(result.getMessage(), player, CheckType.FORCEFIELD);

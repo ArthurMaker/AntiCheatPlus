@@ -16,10 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.api;
+package net.dynamicdev.anticheat.api;
 
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.util.User;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.util.User;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -40,18 +41,18 @@ public class CheckFailEvent extends Event {
     }
 
     /**
-     * Get the {@link net.gravitydevelopment.anticheat.util.User} who failed the check
+     * Get the {@link net.dynamicdev.anticheat.util.User} who failed the check
      *
-     * @return a {@link net.gravitydevelopment.anticheat.util.User}
+     * @return a {@link net.dynamicdev.anticheat.util.User}
      */
     public User getUser() {
         return user;
     }
 
     /**
-     * Get the {@link net.gravitydevelopment.anticheat.check.CheckType} failed
+     * Get the {@link net.dynamicdev.anticheat.check.CheckType} failed
      *
-     * @return a {@link net.gravitydevelopment.anticheat.check.CheckType}
+     * @return a {@link net.dynamicdev.anticheat.check.CheckType}
      */
     public CheckType getCheck() {
         return type;

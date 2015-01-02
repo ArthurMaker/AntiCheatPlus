@@ -17,9 +17,9 @@
  */
 
 
-package net.gravitydevelopment.anticheat.config.providers;
+package net.dynamicdev.anticheat.config.providers;
 
-import net.gravitydevelopment.anticheat.util.rule.Rule;
+import net.dynamicdev.anticheat.util.rule.Rule;
 
 import java.util.List;
 

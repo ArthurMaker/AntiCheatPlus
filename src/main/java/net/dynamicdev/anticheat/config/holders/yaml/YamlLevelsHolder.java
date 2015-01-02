@@ -16,13 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.config.holders.yaml;
+package net.dynamicdev.anticheat.config.holders.yaml;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.config.Configuration;
-import net.gravitydevelopment.anticheat.config.ConfigurationFile;
-import net.gravitydevelopment.anticheat.config.providers.Levels;
-import net.gravitydevelopment.anticheat.util.User;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.config.Configuration;
+import net.dynamicdev.anticheat.config.ConfigurationFile;
+import net.dynamicdev.anticheat.config.providers.Levels;
+import net.dynamicdev.anticheat.util.User;
 
 import java.util.List;
 

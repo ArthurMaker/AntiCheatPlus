@@ -16,13 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.event;
+package net.dynamicdev.anticheat.event;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.check.CheckResult;
-import net.gravitydevelopment.anticheat.util.Distance;
-import net.gravitydevelopment.anticheat.util.Utilities;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.CheckResult;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.util.Distance;
+import net.dynamicdev.anticheat.util.Utilities;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,10 +38,10 @@ public class BlockListener extends EventListener {
     public void onBlockDamage(BlockDamageEvent event) {
         Player player = event.getPlayer();
         if (event.getInstaBreak() || Utilities.isInstantBreak(event.getBlock().getType())) {
-            getBackend().logInstantBreak(player);
+            getBackend().getBlockCheck().logInstantBreak(player);
         }
         if (getCheckManager().willCheck(player, CheckType.AUTOTOOL)) {
-            CheckResult result = getBackend().checkAutoTool(player);
+            CheckResult result = getBackend().getBlockCheck().checkAutoTool(player);
             if (result.failed()) {
                 event.setCancelled(!silentMode());
                 log(result.getMessage(), player, CheckType.AUTOTOOL);
@@ -54,13 +55,13 @@ public class BlockListener extends EventListener {
     public void onBlockPlace(BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         if (player != null && getCheckManager().willCheck(player, CheckType.FAST_PLACE)) {
-            CheckResult result = getBackend().checkFastPlace(player);
+            CheckResult result = getBackend().getBlockCheck().checkFastPlace(player);
             if (result.failed()) {
                 event.setCancelled(!silentMode());
                 log(result.getMessage(), player, CheckType.FAST_PLACE);
             } else {
                 decrease(player);
-                getBackend().logBlockPlace(player);
+                getBackend().getBlockCheck().logBlockPlace(player);
             }
         }
 
@@ -75,7 +76,7 @@ public class BlockListener extends EventListener {
         if (player != null) {
             CheckResult result;
             if (getCheckManager().willCheck(player, CheckType.FAST_BREAK)) {
-                result = getBackend().checkFastBreak(player, block);
+                result = getBackend().getBlockCheck().checkFastBreak(player, block);
                 if (result.failed()) {
                     event.setCancelled(!silentMode());
                     log(result.getMessage(), player, CheckType.FAST_BREAK);
@@ -83,7 +84,7 @@ public class BlockListener extends EventListener {
                 }
             }
             if (getCheckManager().willCheck(player, CheckType.NO_SWING)) {
-                result = getBackend().checkSwing(player, block);
+                result = getBackend().getBlockCheck().checkSwing(player, block);
                 if (result.failed()) {
                     event.setCancelled(!silentMode());
                     log(result.getMessage(), player, CheckType.NO_SWING);
@@ -92,7 +93,7 @@ public class BlockListener extends EventListener {
             }
             if (getCheckManager().willCheck(player, CheckType.LONG_REACH)) {
                 Distance distance = new Distance(player.getLocation(), block.getLocation());
-                result = getBackend().checkLongReachBlock(player, distance.getXDifference(), distance.getYDifference(), distance.getZDifference());
+                result = getBackend().getBlockCheck().checkLongReachBlock(player, distance.getXDifference(), distance.getYDifference(), distance.getZDifference());
                 if (result.failed()) {
                     event.setCancelled(!silentMode());
                     log(result.getMessage(), player, CheckType.LONG_REACH);
@@ -101,7 +102,7 @@ public class BlockListener extends EventListener {
             }
             if(getCheckManager().willCheck(player, CheckType.DIRECTION))
             {
-            	result = getBackend().checkBlockRotation(player, event);
+            	result = getBackend().getBlockCheck().checkBlockRotation(player, event);
             	if(result.failed())
             	{
             		event.setCancelled(!silentMode());
@@ -113,6 +114,6 @@ public class BlockListener extends EventListener {
         if (noHack) {
             decrease(player);
         }
-        getBackend().logBlockBreak(player);
+        getBackend().getBlockCheck().logBlockBreak(player);
     }
 }

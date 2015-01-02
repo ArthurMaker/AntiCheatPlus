@@ -16,13 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.command.executors;
+package net.dynamicdev.anticheat.command.executors;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.command.CommandBase;
-import net.gravitydevelopment.anticheat.manage.CheckManager;
-import net.gravitydevelopment.anticheat.util.*;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.command.CommandBase;
+import net.dynamicdev.anticheat.manage.CheckManager;
+import net.dynamicdev.anticheat.util.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

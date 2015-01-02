@@ -16,10 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.config;
+package net.dynamicdev.anticheat.config;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.util.enterprise.Database;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.util.enterprise.Database;
+
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;

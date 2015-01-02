@@ -1,4 +1,4 @@
-package net.gravitydevelopment.anticheat.config.providers;
+package net.dynamicdev.anticheat.config.providers;
 
 import java.util.List;
 

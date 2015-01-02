@@ -18,6 +18,8 @@
 
 package net.gravitydevelopment.anticheat.util.rule;
 
+import net.dynamicdev.anticheat.util.rule.Rule;
+
 import org.junit.Test;
 
 public class RuleTest {

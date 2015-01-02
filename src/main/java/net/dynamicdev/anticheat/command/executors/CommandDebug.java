@@ -16,11 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.command.executors;
+package net.dynamicdev.anticheat.command.executors;
 
-import net.gravitydevelopment.anticheat.command.CommandBase;
-import net.gravitydevelopment.anticheat.util.PastebinReport;
-import net.gravitydevelopment.anticheat.util.Permission;
+import net.dynamicdev.anticheat.command.CommandBase;
+import net.dynamicdev.anticheat.util.PastebinReport;
+import net.dynamicdev.anticheat.util.Permission;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

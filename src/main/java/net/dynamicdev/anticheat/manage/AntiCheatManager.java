@@ -16,12 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.manage;
+package net.dynamicdev.anticheat.manage;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.Backend;
-import net.gravitydevelopment.anticheat.config.Configuration;
-import net.gravitydevelopment.anticheat.xray.XRayTracker;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.Backend;
+import net.dynamicdev.anticheat.config.Configuration;
+import net.dynamicdev.anticheat.xray.XRayTracker;
+
 import org.bukkit.plugin.RegisteredListener;
 
 import java.util.Map;

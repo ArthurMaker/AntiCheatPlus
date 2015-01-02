@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.config.providers;
+package net.dynamicdev.anticheat.config.providers;
 
-import net.gravitydevelopment.anticheat.util.Group;
+import net.dynamicdev.anticheat.util.Group;
 
 import java.util.List;
 

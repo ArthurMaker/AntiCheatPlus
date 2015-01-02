@@ -16,20 +16,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat;
+package net.dynamicdev.anticheat;
 
 import com.comphenix.protocol.ProtocolLibrary;
 
-import net.gravitydevelopment.anticheat.command.CommandHandler;
-import net.gravitydevelopment.anticheat.config.Configuration;
-import net.gravitydevelopment.anticheat.event.*;
-import net.gravitydevelopment.anticheat.manage.AntiCheatManager;
-import net.gravitydevelopment.anticheat.manage.PacketManager;
-import net.gravitydevelopment.anticheat.util.Permission;
-import net.gravitydevelopment.anticheat.util.User;
-import net.gravitydevelopment.anticheat.util.Utilities;
-import net.gravitydevelopment.anticheat.xray.XRayListener;
-import net.gravitydevelopment.anticheat.xray.XRayTracker;
+import net.dynamicdev.anticheat.command.CommandHandler;
+import net.dynamicdev.anticheat.config.Configuration;
+import net.dynamicdev.anticheat.event.*;
+import net.dynamicdev.anticheat.manage.AntiCheatManager;
+import net.dynamicdev.anticheat.manage.PacketManager;
+import net.dynamicdev.anticheat.util.Permission;
+import net.dynamicdev.anticheat.util.User;
+import net.dynamicdev.anticheat.util.Utilities;
+import net.dynamicdev.anticheat.xray.XRayListener;
+import net.dynamicdev.anticheat.xray.XRayTracker;
 import net.gravitydevelopment.updater.Updater;
 
 import org.bukkit.Bukkit;

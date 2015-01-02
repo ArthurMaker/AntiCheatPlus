@@ -1,8 +1,9 @@
 // Not production code yet. Still experimental and needs a lot of work.
 
-package net.gravitydevelopment.anticheat.util;
+package net.dynamicdev.anticheat.util;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.AntiCheat;
+
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

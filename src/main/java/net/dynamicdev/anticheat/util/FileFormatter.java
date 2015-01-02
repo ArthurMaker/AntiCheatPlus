@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util;
+package net.dynamicdev.anticheat.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

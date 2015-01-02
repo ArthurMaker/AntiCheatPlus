@@ -16,12 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.manage;
+package net.dynamicdev.anticheat.manage;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.config.Configuration;
-import net.gravitydevelopment.anticheat.util.Permission;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.config.Configuration;
+import net.dynamicdev.anticheat.util.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

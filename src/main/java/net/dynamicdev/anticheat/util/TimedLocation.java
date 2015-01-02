@@ -1,4 +1,4 @@
-package net.gravitydevelopment.anticheat.util;
+package net.dynamicdev.anticheat.util;
 
 import org.bukkit.Location;
 

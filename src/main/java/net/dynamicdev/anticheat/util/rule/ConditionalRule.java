@@ -16,14 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util.rule;
+package net.dynamicdev.anticheat.util.rule;
 
-import net.gravitydevelopment.anticheat.check.CheckType;
-import net.gravitydevelopment.anticheat.util.User;
+import net.dynamicdev.anticheat.check.CheckType;
+import net.dynamicdev.anticheat.util.User;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
 import java.util.SortedMap;
 
 /**
@@ -42,7 +43,7 @@ import java.util.SortedMap;
  * Check_SPIDER > 0 ? Player.KICK : null<br />
  * <i>The above statement would read 'If the spider check has been failed over zero times, kick the player. Otherwise, do nothing.'</i>
  * <p/>
- * To see syntax for variables and functions that you may use, see {@link net.gravitydevelopment.anticheat.util.rule.Rule}
+ * To see syntax for variables and functions that you may use, see {@link net.dynamicdev.anticheat.util.rule.Rule}
  */
 public class ConditionalRule extends Rule {
 

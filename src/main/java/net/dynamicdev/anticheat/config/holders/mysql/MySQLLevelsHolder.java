@@ -16,13 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.config.holders.mysql;
+package net.dynamicdev.anticheat.config.holders.mysql;
 
-import net.gravitydevelopment.anticheat.AntiCheat;
-import net.gravitydevelopment.anticheat.config.Configuration;
-import net.gravitydevelopment.anticheat.config.ConfigurationTable;
-import net.gravitydevelopment.anticheat.config.providers.Levels;
-import net.gravitydevelopment.anticheat.util.User;
+import net.dynamicdev.anticheat.AntiCheat;
+import net.dynamicdev.anticheat.config.Configuration;
+import net.dynamicdev.anticheat.config.ConfigurationTable;
+import net.dynamicdev.anticheat.config.providers.Levels;
+import net.dynamicdev.anticheat.util.User;
+
 import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;

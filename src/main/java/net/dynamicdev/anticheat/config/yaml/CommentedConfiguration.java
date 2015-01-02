@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.config.yaml;
+package net.dynamicdev.anticheat.config.yaml;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;

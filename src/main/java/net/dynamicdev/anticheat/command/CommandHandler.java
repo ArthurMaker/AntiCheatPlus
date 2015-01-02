@@ -16,9 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.command;
+package net.dynamicdev.anticheat.command;
 
-import net.gravitydevelopment.anticheat.command.executors.*;
+import net.dynamicdev.anticheat.command.executors.*;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
