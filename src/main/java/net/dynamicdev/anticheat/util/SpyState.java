@@ -16,17 +16,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util.rule;
+package net.dynamicdev.anticheat.util;
 
-import net.dynamicdev.anticheat.util.rule.Rule;
+import org.bukkit.Location;
 
-import org.junit.Test;
+public class SpyState {
+    private boolean allowFlight;
+    private boolean flying;
+    private Location location;
 
-public class RuleTest {
+    public SpyState(boolean allowFlight, boolean flying, Location location) {
+        this.allowFlight = allowFlight;
+        this.flying = flying;
+        this.location = location;
+    }
 
-    @Test
-    public void testRegex() {
-        final String rule = "Check_SPIDER < 0 ? Player.KICK : null";
-        assert(Rule.Type.CONDITIONAL.matches(rule));
+    public boolean getAllowFlight() {
+        return this.allowFlight;
+    }
+
+    public boolean getFlying() {
+        return this.flying;
+    }
+
+    public Location getLocation() {
+        return this.location;
     }
 }

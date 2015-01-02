@@ -16,17 +16,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util.rule;
+package net.dynamicdev.anticheat.config.providers;
 
-import net.dynamicdev.anticheat.util.rule.Rule;
+import net.dynamicdev.anticheat.util.Group;
 
-import org.junit.Test;
+import java.util.List;
 
-public class RuleTest {
+public interface Groups {
 
-    @Test
-    public void testRegex() {
-        final String rule = "Check_SPIDER < 0 ? Player.KICK : null";
-        assert(Rule.Type.CONDITIONAL.matches(rule));
-    }
+    /**
+     * Get all groups.
+     *
+     * @return List of groups.
+     */
+    public List<Group> getGroups();
+
+    /**
+     * Get the highest level value assigned to a group.
+     * Used as a maximum cap to rising hack levels.
+     *
+     * @return Highest group level.
+     */
+    public int getHighestLevel();
 }

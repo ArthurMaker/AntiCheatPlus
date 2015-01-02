@@ -19,6 +19,8 @@
 package net.gravitydevelopment.anticheat.util;
 
 
+import net.dynamicdev.anticheat.util.BlockHardness;
+
 import org.bukkit.Material;
 import org.junit.Assert;
 import org.junit.Test;

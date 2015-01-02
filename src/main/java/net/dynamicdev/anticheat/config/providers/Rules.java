@@ -16,17 +16,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util.rule;
+
+package net.dynamicdev.anticheat.config.providers;
 
 import net.dynamicdev.anticheat.util.rule.Rule;
 
-import org.junit.Test;
+import java.util.List;
 
-public class RuleTest {
+public interface Rules {
 
-    @Test
-    public void testRegex() {
-        final String rule = "Check_SPIDER < 0 ? Player.KICK : null";
-        assert(Rule.Type.CONDITIONAL.matches(rule));
-    }
+    /**
+     * Get all rules.
+     *
+     * @return List of rules.
+     */
+    public List<Rule> getRules();
 }

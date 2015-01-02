@@ -16,17 +16,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util.rule;
+package net.dynamicdev.anticheat.util;
 
-import net.dynamicdev.anticheat.util.rule.Rule;
+import org.bukkit.Material;
 
-import org.junit.Test;
+public enum ToolHardness {
 
-public class RuleTest {
+    // NOTHING(null, 1.5)
+    WOOD(0.75D),
+    STONE(0.40D),
+    IRON(0.25D),
+    DIAMOND(0.20D),
+    SHEARS(0.55D),
+    GOLD(0.15D);
 
-    @Test
-    public void testRegex() {
-        final String rule = "Check_SPIDER < 0 ? Player.KICK : null";
-        assert(Rule.Type.CONDITIONAL.matches(rule));
+    double hardness;
+
+    ToolHardness(double hard) {
+        hardness = hard;
+    }
+
+    public static double getToolHardness(Material tool) {
+        for (ToolHardness e : ToolHardness.values()) {
+            if (tool.name().contains(e.name())) {
+                return e.hardness;
+            }
+        }
+
+        return 1.50D;
     }
 }

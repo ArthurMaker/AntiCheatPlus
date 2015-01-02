@@ -16,17 +16,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.gravitydevelopment.anticheat.util.rule;
+package net.dynamicdev.anticheat.util;
 
-import net.dynamicdev.anticheat.util.rule.Rule;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
 
-import org.junit.Test;
+public class FileFormatter extends Formatter {
+    private static final DateFormat FORMAT = new SimpleDateFormat("h:mm:ss");
+    private static final String LINE_SEP = System.getProperty("line.separator");
 
-public class RuleTest {
-
-    @Test
-    public void testRegex() {
-        final String rule = "Check_SPIDER < 0 ? Player.KICK : null";
-        assert(Rule.Type.CONDITIONAL.matches(rule));
+    @Override
+    public String format(LogRecord record) {
+        StringBuilder output = new StringBuilder().append("[").append(record.getLevel()).append('|').append(FORMAT.format(new Date(record.getMillis()))).append("]: ").append(record.getMessage()).append(' ').append(LINE_SEP);
+        return output.toString();
     }
 }
