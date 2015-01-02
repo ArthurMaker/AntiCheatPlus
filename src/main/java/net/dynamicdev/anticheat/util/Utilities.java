@@ -90,6 +90,17 @@ public final class Utilities {
 		return toReturn;
 	}
     
+    public static double getDistance3D(SimpleLocation one, SimpleLocation two)
+    {
+    	double toReturn = 0.0;
+		double xSqr = (two.getX() - one.getX()) * (two.getX() - one.getX());
+		double ySqr = (two.getY() - one.getY()) * (two.getY() - one.getY());
+		double zSqr = (two.getZ() - one.getZ()) * (two.getZ() - one.getZ());
+		double sqrt = Math.sqrt(xSqr + ySqr + zSqr);
+		toReturn = Math.abs(sqrt);
+		return toReturn;
+    }
+    
     /**
      * Gets the horizontal distance between two Locations
      * @param one the first location
@@ -97,6 +108,15 @@ public final class Utilities {
      * @return the horizontal distance between the two points
      */
     public static double getHorizontalDistance(Location one, Location two) {
+		double toReturn = 0.0;
+		double xSqr = (two.getX() - one.getX()) * (two.getX() - one.getX());
+		double zSqr = (two.getZ() - one.getZ()) * (two.getZ() - one.getZ());
+		double sqrt = Math.sqrt(xSqr + zSqr);
+		toReturn = Math.abs(sqrt);
+		return toReturn;
+	}
+    
+    public static double getHorizontalDistance(SimpleLocation one, SimpleLocation two) {
 		double toReturn = 0.0;
 		double xSqr = (two.getX() - one.getX()) * (two.getX() - one.getX());
 		double zSqr = (two.getZ() - one.getZ()) * (two.getZ() - one.getZ());
@@ -131,6 +151,19 @@ public final class Utilities {
 
     	return (center1 && north1 && east1 && south1 && west1 && northeast1 && southeast1
     			&& northwest1 && southwest1 && overAir1);
+    }
+    
+    /**
+     * Check if only the block beneath them is standable (includes water + lava)
+     * @param block the block to check (under)
+     * @return true if they cannot stand there
+     */
+    public static boolean cantStandAtSingle(Block block)
+    {
+    	// TODO: Implement Better to reduce false positives
+    	Block otherBlock = block.getRelative(BlockFace.DOWN);
+    	boolean center = otherBlock.getType() == Material.AIR;
+    	return center;
     }
     
     /**
