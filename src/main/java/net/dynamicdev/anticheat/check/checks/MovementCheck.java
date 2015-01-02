@@ -50,8 +50,10 @@ public class MovementCheck extends AntiCheatCheck {
     private Map<String, Integer> velocitytrack = new HashMap<String, Integer>();
     private Map<String, Long> movingExempt = new HashMap<String, Long>();
     private Map<String, Long> sneakExempt = new HashMap<String, Long>();
+    private Map<String, Integer> timerBuffer = new HashMap<String, Integer>();
     
-	
+    private static final double TIME_SECOND = 1.0;
+    
 	public MovementCheck(AntiCheatManager instance) {
 		super(instance);
 	}
@@ -571,45 +573,54 @@ public class MovementCheck extends AntiCheatCheck {
     		//NPC's with no names? C'mon.
     		return PASS;
     	}
-        String name = player.getName();
+    	String name = player.getName();
         if(!stepTime.containsKey(name))
         {
         	stepTime.put(name, System.currentTimeMillis());
         }
+        if(!timerBuffer.containsKey(name))
+        {
+        	timerBuffer.put(name, magic.TIMER_STEP_CHECK());
+        }
+        timerBuffer.put(name, timerBuffer.get(name) - 1);
         if(!AntiCheat.getManager().getBackend().isMovingExempt(player))
         {
-        	long currentTime = System.currentTimeMillis();
-        	long math = currentTime - stepTime.get(name);
-        	stepTime.put(name, currentTime);
-        	if(math < magic.TIMER_TIMEMIN())
+        	if(timerBuffer.get(name) < 0)
         	{
-        		if(!steps.containsKey(name))
+        		if(!silentMode())
         		{
-        			steps.put(name, 1);
+        			sendFormattedMessage(player, "Modification of game timer detected. Please stand still for a bit.");
         		}
-        		else
-        		{
-        			steps.put(name, steps.get(name) + 1);
-        		}
-        		if(steps.get(name) > magic.TIMER_STEP_CHECK())
-        		{
-        			if(!silentMode())
-        			{
-        				sendFormattedMessage(player, "Modification of game timer detected. Please stand still for a bit.");
-        			}
-        			return new CheckResult(CheckResult.Result.FAILED, 
-        					name + " attempted to send packets too fast; min_delta=" 
-        							+ magic.TIMER_TIMEMIN() + " | their's=" + math);
-        		}
+        		incrementTimerBuffer(name);
+        		return new CheckResult(CheckResult.Result.FAILED, 
+        				name + " attempted to send packets too fast!");
         	}else
         	{
-        		if(steps.get(name) >= 2)
-    			{
-    				steps.put(name, steps.get(name) - 2);
-    			}
+        		incrementTimerBuffer(name);
         	}
         }
         return PASS;
+    }
+    
+    private void incrementTimerBuffer(String name)
+    {
+    	//To account for server lag
+    	double timeSince = (System.currentTimeMillis() - stepTime.get(name)) / 1000;
+    	if(timeSince > TIME_SECOND)
+    	{
+    		double allowedPackets = timeSince * magic.TIMER_TIMEMIN();
+    		//Let's not go too crazy here...
+    		if(timerBuffer.get(name) > 65)
+    		{
+    			timerBuffer.put(name, 65);
+    		}
+    		else
+    		{
+    			timerBuffer.put(name, (int) (timerBuffer.get(name) + allowedPackets));
+    		}
+
+        	stepTime.put(name, System.currentTimeMillis());
+    	}
     }
 
 

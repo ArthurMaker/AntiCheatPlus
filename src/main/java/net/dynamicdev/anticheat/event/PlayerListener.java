@@ -386,14 +386,17 @@ public class PlayerListener extends EventListener {
                         changed = true;
                     }
                     if ((event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ())) {
-                        CheckResult result1 = getBackend().getMovementCheck().checkTimer(player);
-                        if(result1.failed()) {
-                            if (!silentMode()) {
-                                event.setTo(user.getGoodLocation(from.clone()));
-                            }
-                            log(result1.getMessage(), player, CheckType.MOREPACKETS);
-                            changed = true;
-                        }
+                    	if(getCheckManager().willCheckQuick(player, CheckType.MOREPACKETS))
+                    	{
+                    		CheckResult result1 = getBackend().getMovementCheck().checkTimer(player);
+                    		if(result1.failed()) {
+                    			if (!silentMode()) {
+                    				event.setTo(user.getGoodLocation(from.clone()));
+                    			}
+                    			log(result1.getMessage(), player, CheckType.MOREPACKETS);
+                    			changed = true;
+                    		}
+                    	}
                     }
                     
                 }
