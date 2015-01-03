@@ -667,7 +667,7 @@ public class MovementCheck extends AntiCheatCheck {
     	}
     	double currentY = player.getLocation().getY();
     	double math = currentY - lastYcoord.get(name);
-    	if(math < 0 && !AntiCheat.getManager().getBackend().isMovingExempt(player))
+    	if(math < 0 && math > -3.4 && !AntiCheat.getManager().getBackend().isMovingExempt(player))
     	{
     		if(math <= lastYDelta.get(name) && !(player.getEyeLocation().getBlock().getType() == Material.LADDER)
     				&& !Utilities.isInWater(player) && !Utilities.isInWeb(player)

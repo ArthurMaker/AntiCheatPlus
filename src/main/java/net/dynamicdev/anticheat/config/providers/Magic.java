@@ -40,7 +40,7 @@ public interface Magic {
 	/**
 	 * Minimum time that can span between a person's attacks; Type=SYSTEM, Leniency=DECREASE.
 	 */
-	public long FIGHT_TIME_MIN();
+	public int FIGHT_TIME_MIN();
 	/**
 	 * Maximum distance a player can attack something from; Type=DOUBLE, Leniency=INCREASE.
 	 */
